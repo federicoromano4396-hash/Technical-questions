@@ -3,647 +3,361 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Ryanair Technical Questions — Study App</title>
+<title>Ryanair Technical Questions – 142 (TXT) + Preferiti</title>
 <style>
-  :root{--bg:#0f172a;--panel:#111827;--muted:#1f2937;--text:#e5e7eb;--accent:#38bdf8;--accent2:#a78bfa}
+  :root{--bg:#0f172a;--panel:#111827;--muted:#1f2937;--text:#e5e7eb;--accent:#38bdf8;--accent2:#a78bfa;--green:#10b981;--red:#ef4444;--yellow:#fbbf24}
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Ubuntu,'Helvetica Neue',Arial,sans-serif;background:linear-gradient(180deg,#0b1220,#0f172a);color:var(--text);min-height:100vh}
   header{position:sticky;top:0;z-index:10;background:rgba(17,24,39,.8);backdrop-filter:blur(8px);border-bottom:1px solid #263043}
-  .wrap{max-width:1100px;margin:0 auto;padding:16px}
-  h1{margin:0;font-weight:700;font-size:22px;letter-spacing:.2px}
-  main{max-width:1100px;margin:16px auto;display:grid;grid-template-columns:280px 1fr;gap:16px;padding:0 16px}
-  @media (max-width:900px){main{grid-template-columns:1fr}}
+  .wrap{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  h1{margin:0;font-weight:700;font-size:18px;letter-spacing:.2px}
+  .tag{padding:6px 10px;border:1px solid #263043;border-radius:999px;background:#0b1326;font-size:12px;color:#9fb3c8}
+  main{max-width:900px;margin:16px auto;padding:0 16px}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;margin-bottom:12px}
+  .btn{padding:10px 16px;border-radius:12px;border:1px solid #2a3347;background:#0b1326;color:#e5e7eb;cursor:pointer;font-weight:600;font-size:14px;transition:all .2s ease}
+  .btn:hover{transform:translateY(-1px);border-color:#3a4660}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0b1220;border:none}
+  .btn-outline{background:transparent}
+  .btn-toggle.active{outline:2px solid var(--accent)}
+  .counter{font-size:12px;color:#9fb3c8}
   .card{background:var(--panel);border:1px solid #263043;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,.25)}
-  .sidebar{padding:12px}
-  .tabbar{display:flex;gap:8px;margin:12px}
-  .tabbar button{flex:1;padding:10px 12px;border-radius:12px;border:1px solid #263043;background:#0b1326;color:#cbd5e1;cursor:pointer}
-  .tabbar button.active{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;color:#0b1220;font-weight:700}
-  .search{display:flex;gap:8px;margin:8px 0}
-  .search input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid #2b3650;background:#0b1326;color:var(--text)}
-  .cat-list{display:grid;gap:6px;max-height:60vh;overflow:auto;padding-right:4px}
-  .cat{padding:10px 12px;border-radius:10px;border:1px solid #263043;background:#0b1326;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-  .cat.active{outline:2px solid var(--accent);background:#0e1a34}
-  .content{padding:16px}
-  .content h2{margin:6px 0 12px}
-  .meta{font-size:12px;opacity:.8;margin-bottom:12px}
-  ol{padding-left:20px}
-  li{margin:6px 0; display: flex; align-items: center; justify-content: space-between;}
-  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#0b1326;border:1px solid #263043;font-size:12px}
-  .controls{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
-  .btn{padding:10px 12px;border-radius:10px;border:1px solid #263043;background:#0b1326;color:var(--text);cursor:pointer}
-  .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;color:#0b1220;font-weight:700}
-  .row{display:grid;gap:10px;grid-template-columns:1fr 1fr}
-  @media (max-width:700px){.row{grid-template-columns:1fr}}
-  select{padding:10px 12px;border-radius:10px;border:1px solid #2b3650;background:#0b1326;color:var(--text)}
-  .question-box{border:1px dashed #2b3650;border-radius:14px;padding:18px;font-size:18px;line-height:1.45;min-height:72px;background:#0b1326}
+  .quiz-container{padding:20px}
+  .quiz-header{text-align:center;margin-bottom:12px}
+  .quiz-header h2{margin:0 0 8px;font-size:22px}
+  .progress-info{font-size:13px;color:#94a3b8;margin-bottom:10px}
   .progress{height:8px;background:#0b1326;border:1px solid #263043;border-radius:999px;overflow:hidden}
-  .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2))}
-  footer{max-width:1100px;margin:24px auto 48px;opacity:.7;padding:0 16px}
-  
-  /* Quiz Mode Layout */
-  .quiz-mode main{
-    grid-template-columns: 1fr;
-    max-width: 800px;
-    justify-items: center;
-  }
-  .quiz-mode .sidebar{
-    width: 100%;
-    max-width: 600px;
-  }
-  .quiz-mode .content{
-    display: none;
-  }
-  .quiz-card{
-    background: var(--panel);
-    border: 1px solid #263043;
-    border-radius: 20px;
-    padding: 32px;
-    margin: 20px 0;
-    text-align: center;
-    font-size: 20px;
-    line-height: 1.6;
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 15px 35px rgba(0,0,0,.3);
-    transition: all 0.3s ease;
-    flex-direction: column;
-  }
-  .quiz-card:hover{
-    transform: translateY(-2px);
-    box-shadow: 0 20px 40px rgba(0,0,0,.4);
-  }
-
-  /* Styling for the flag icon */
-  .flag-icon {
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-left: 8px;
-    opacity: 0.3;
-    transition: opacity 0.2s ease, color 0.2s ease;
-  }
-
-  .flag-icon.flagged {
-    opacity: 1;
-    color: var(--accent);
-  }
-
-  li:hover .flag-icon {
-    opacity: 1;
-  }
-
-  /* Quiz question container styling */
-  .quiz-question-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      width: 100%;
-  }
-
-  .quiz-question-text {
-      flex: 1;
-      text-align: center;
+  .progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.3s ease}
+  .flashcard{min-height:360px;background:#0b1326;border:2px solid #263043;border-radius:20px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:all 0.3s ease;position:relative;perspective:1000px;}
+  .flashcard:hover{border-color:var(--accent)}
+  .flashcard:focus{outline:2px solid var(--accent)}
+  .flashcard-inner{position:relative;width:100%;height:100%;text-align:center;transition:transform 0.6s;transform-style:preserve-3d;min-height:320px;display:flex;align-items:center;justify-content:center;}
+  .flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
+  .flashcard-front, .flashcard-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;padding:32px;}
+  .flashcard-back{transform:rotateY(180deg)}
+  .question-text{font-size:20px;line-height:1.5;font-weight:600;color:var(--accent)}
+  .answer-text{font-size:16px;line-height:1.6;color:var(--text)}
+  .controls{display:flex;justify-content:center;gap:16px;margin-top:16px;flex-wrap:wrap}
+  .btn-know{background:var(--green);color:white;border:none}
+  .btn-know:hover{background:#059669;transform:translateY(-1px)}
+  .btn-dont-know{background:var(--red);color:white;border:none}
+  .btn-dont-know:hover{background:#dc2626;transform:translateY(-1px)}
+  .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;background:#0b1326;border:1px solid #263043;border-bottom-width:3px;padding:2px 6px;border-radius:6px}
+  .completion-message{text-align:center;padding:48px}
+  .completion-message h3{color:var(--green);font-size:28px;margin-bottom:16px}
+  .completion-message p{font-size:16px;color:#94a3b8;margin-bottom:24px}
+  .btn-restart{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0b1220;border:none}
+  .btn-restart:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(56,189,248,0.3)}
+  .flip-hint{position:absolute;bottom:16px;right:16px;font-size:12px;color:#64748b;opacity:0;transition:opacity 0.3s}
+  .flashcard:not(.flipped):hover .flip-hint{opacity:1}
+  .star-btn{position:absolute;top:12px;right:12px;background:transparent;border:1px solid #2a3347;border-radius:999px;padding:8px 10px;cursor:pointer}
+  .star-btn:hover{border-color:#3a4660;transform:translateY(-1px)}
+  .star{font-size:18px;color:#e5e7eb}
+  .star.active{color:var(--yellow)}
+  .mode-chip{padding:6px 10px;border-radius:999px;background:#0b1326;border:1px solid #2a3347;font-size:12px;color:#e5e7eb}
+  .empty{text-align:center;color:#9fb3c8;padding:16px}
+  @media (max-width:600px){
+    .flashcard{min-height:300px}
+    .question-text{font-size:18px}
+    .answer-text{font-size:14px}
+    .controls{flex-direction:column;align-items:center}
+    .btn{width:220px;justify-content:center}
   }
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <h1>Ryanair Technical Questions — Study App</h1>
-  </div>
-</header>
-<main>
-  <aside class="card sidebar">
-    <div class="tabbar">
-      <button id="tab-browse" class="active">Sfoglia</button>
-      <button id="tab-quiz">Quiz</button>
+  <header>
+    <div class="wrap">
+      <h1>Ryanair Technical Questions</h1>
+      <span class="tag">Fonte: TXT (142)</span>
+      <span class="tag" id="mode-indicator">Modalità: Tutte</span>
+      <span class="tag" id="fav-count">⭐ 0</span>
+      <div style="flex:1"></div>
+      <button class="btn btn-outline btn-toggle" id="toggle-mode">Domande difficili</button>
+      <button class="btn btn-primary" id="restart-btn">Ricomincia</button>
     </div>
-    <div id="browse-panel">
-      <div class="search">
-        <input id="search" type="search" placeholder="Cerca domanda… (filtra nella categoria)"/>
-      </div>
-      <div class="cat-list" id="cat-list"></div>
-    </div>
-    <div id="quiz-panel" style="display:none">
-      <div class="row">
-        <label>
-          <div class="pill" style="margin-bottom:6px">Categoria</div>
-          <select id="quiz-category"></select>
-        </label>
-        <label>
-          <div class="pill" style="margin-bottom:6px">Ordina in modo casuale</div>
-          <select id="shuffle-mode">
-            <option value="true">Sì (consigliato)</option>
-            <option value="false">No (in ordine)</option>
-          </select>
-        </label>
-      </div>
-      <div class="controls">
-        <button class="btn primary" id="start-quiz">Avvia/Reset quiz</button>
-        <button class="btn" id="next">Avanti ▶</button>
-        <button class="btn" id="prev">◀ Indietro</button>
-        <button class="btn" id="skip">Salta</button>
-        <button class="btn" id="restart">Ricomincia</button>
-      </div>
-      <div class="meta"><span id="counter">0 / 0</span> • <span id="status">Inattivo</span></div>
-      <div class="quiz-card" id="question-card" style="display:none">
-        <div id="quiz-question-container" class="quiz-question-container">
-          <span id="question-text" class="quiz-question-text">Premi "Avvia/Reset quiz" per iniziare.</span>
-          <span id="quiz-flag-icon" class="flag-icon">⭐</span>
+  </header>
+  <main>
+    <div class="card quiz-container">
+      <div class="quiz-header">
+        <h2>Modalità Studio</h2>
+        <div class="progress-info" aria-live="polite">
+          <strong><span id="current-card">1</span> di <span id="total-cards">0</span></strong>
+          <span id="remaining-info"> • Rimaste: <span id="remaining-cards">0</span></span>
+          <div style="margin-top:8px">Suggerimenti: <span class="kbd">Spazio/Invio</span> gira, <span class="kbd">K</span> so, <span class="kbd">J</span> non so, <span class="kbd">*</span> stella</div>
+        </div>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="progress-bar" id="progress-bar"></div>
         </div>
       </div>
-      <div class="question-box" id="question-box">Premi "Avvia/Reset quiz" per iniziare.</div>
-      <div class="progress" style="margin-top:10px"><div class="bar" id="bar"></div></div>
+      
+      <div id="quiz-content">
+        <div class="flashcard" id="flashcard" tabindex="0" aria-label="Carta: clicca o premi spazio per vedere la risposta">
+          <button class="star-btn" id="star-btn" title="Contrassegna questa domanda">
+            <span class="star" id="star-icon">☆</span>
+          </button>
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="question-text" id="question-text"></div>
+              <div class="flip-hint">Clicca per vedere la risposta</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="answer-text" id="answer-text"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="controls">
+          <button class="btn btn-dont-know" id="dont-know-btn" title="Passa alla prossima (J)">
+            ✗ Non la so
+          </button>
+          <button class="btn btn-know" id="know-btn" title="Rimuovi la carta (K)">
+            ✓ La so
+          </button>
+        </div>
+        <div id="empty-state" class="empty" style="display:none;">Nessuna domanda contrassegnata. Aggiungi ⭐ per popolare “Domande difficili”.</div>
+      </div>
+      
+      <div id="completion-screen" style="display: none;">
+        <div class="completion-message">
+          <h3>Complimenti! 🎉</h3>
+          <p>Hai completato tutte le domande! Ottimo lavoro!</p>
+          <button class="btn btn-restart" id="restart2-btn">🔄 Ricomincia</button>
+        </div>
+      </div>
     </div>
-  </aside>
-  <section class="card content">
-    <div id="content"></div>
-  </section>
-</main>
-<footer>
-  <small>Single‑file app. Le domande sono incluse localmente; nessun dato esce dal tuo dispositivo.</small>
-</footer>
-<script type="module">
-// ===== FIREBASE SETUP =====
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, deleteDoc, collection, query, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  </main>
 
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+  <script type="module">
+    // ==== Firebase (Realtime Database) ====
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, get, set, update, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyD2pCuKGGeitJRICGz17bxKRiWu9wDtZ_Y",
+      authDomain: "technical-questions-75f17.firebaseapp.com",
+      projectId: "technical-questions-75f17",
+      storageBucket: "technical-questions-75f17.firebasestorage.app",
+      messagingSenderId: "800075170800",
+      appId: "1:800075170800:web:0e503fe74d0decf5821335",
+      measurementId: "G-Y3GJETD4G5",
+      databaseURL: "https://technical-questions-75f17-default-rtdb.europe-west1.firebasedatabase.app"
+    };
 
-let userId = null;
-let difficultQuestionsCollection;
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-// ===== Dataset: DOMANDE TECNICHE FILTRATE =====
-const DATA = {
-  "B737-800 / 8200": [
-    "How many seats are on a 737-800?",
-    "What type of engines are on a 737-800?",
-    "How many flight attendants are there on a 737-800?",
-    "Pressurisation of the cabin in cruise on a 737-800?",
-    "What is the optimum cruising altitude on a 737-800?",
-    "What are winglets and what advantages do they give on a 737-800?",
-    "What is the fuel capacity of a 737-800?",
-    "What is the range of a 737-800?",
-    "What is the FMA? Where is it location? Explain the modes?",
-    "Icing protection and systems on a 737-800?",
-    "Can the 737-800 fly in icing conditions?",
-    "Emergency exits available to pilots?",
-    "Max Mach number on a 737-800?",
-    "What is the cruise speed of a 737-800?",
-    "What is VNE and what limits it?",
-    "Max ceiling of a 737-800?",
-    "MTOW of a 737-800?",
-    "How many exits on a 737-800?",
-    "Which direction do the fan blades rotate on a 737-800?",
-    "What is the ratio? (bypass ratio)",
-    "B737 winglets?",
-    "What is cost index?",
-    "What is optimum altitude?",
-    "Does the 737-800 have a critical engine?",
-    "How does the CFM56-7B engine on the 737-800 work?",
-    "Differences between the 737-800 and the MAX?",
-    "Electrical system of a 737-800?",
-    "What is the sweep angle of a 737-800, why this value and not another?",
-    "Rejected take-off procedure on MCC?",
-    "Hydraulic pressure for 737-800?",
-    "How are control surfaces operated on a 737-800?",
-    "How many hydraulic systems does the 737-800 have? What do they operate?",
-    "What leading edge devices are on a 737-800?",
-    "What trailing edge devices are on a 737-800?",
-    "What do you know about 737-800?",
-    "How is the landing gear operated in a 737 NG?",
-    "What is wingspan on Boeing 737-800?",
-    "How much voltage does the engine produce? And how much hertz?",
-    "What is the Hertz when the engine doesn't rotate fast?",
-    "What is the G limit of the 737-800?",
-    "What kind of elevator system the 737 has?",
-    "Does the engine on the 737 rotate in the same direction?",
-    "What navigation systems are on a 737-800?",
-    "737-800 V 737 MAX – Facts, differences, performance?",
-    "Differences between 737 and A320?",
-    "737-8200 Engine. How does it work?",
-    "Is it worth Ryanair buying the 210 MAX?",
-    "Why will the new B737 game changer be good for the company?",
-    "737 controls vs Fly by wire?"
-  ],
-  "Principles of Flight / Aerodinamica": [
-    "What is Mcrit?",
-    "What is Mach Tuck?",
-    "What is Mach Trimmer?",
-    "Why does some aircraft have winglets?",
-    "Wing tip vortices?",
-    "Sweep angle?",
-    "Swept wing vs straight wing?",
-    "High lift devices?",
-    "Spoilers?",
-    "Use of spoilers during roll?",
-    "Advantages/disadvantages of high tails?",
-    "Critical engine?",
-    "Describe the hydraulics system?",
-    "Yaw Damper?",
-    "MCAS?",
-    "Trim runaway. What do you do?"
-  ],
-  "Performance / Operations": [
-    "Name the V speeds in order they come?",
-    "What is screen height?",
-    "What is V1?",
-    "What is V2?",
-    "What is VMCA?",
-    "What is VMCG?",
-    "Definitions of TORA, clearway, TODA, stopway, ASDA?",
-    "What is RVSM airspace?",
-    "Semicircular levels?",
-    "What are the lights on the runway?",
-    "Approach lighting?",
-    "Runway markings?",
-    "VFR weather minimums?",
-    "Non precision approaches?",
-    "What are the three types of instrument approaches?",
-    "What is DA?",
-    "What's the difference between DA and MDA?",
-    "Precision approach CAT?",
-    "Minimums for the Alternate?",
-    "What is MSA?",
-    "What is MEA?",
-    "What is MORA?",
-    "What is MOCA?",
-    "What is MAA?",
-    "What is MHA?"
-  ],
-  "Navigation / Instruments": [
-    "What is an NDB?",
-    "What are the errors of an NDB?",
-    "What are the NDB/ADF errors?",
-    "What happens with the airspeed indicator if the pitot probe is blocked during climb?",
-    "… and during descent?",
-    "What happens if pitot tube is blocked?",
-    "What happens if static port is blocked?",
-    "What is the difference between IAS and TAS?",
-    "What is LSS at sea level with +15 °C?",
-    "Standard ISA conditions?",
-    "One millibar in feet?",
-    "What is an INS/IRS?",
-    "Advantages of an INS/IRS?",
-    "What is an FMS and FMC?",
-    "What's an INS? What are the differences with a GPS?"
-  ],
-  "Systems / Powerplant": [
-    "Fuel system B737?",
-    "Detonation vs Pre-Ignition?",
-    "Take Off config warning?",
-    "What can cause vibration in the engine?",
-    "What's an IDG?",
-    "All the Weights?",
-    "Mass of people?",
-    "What is a load sheet?",
-    "Why does the captain fill it?",
-    "What is centre of gravity?",
-    "How do you calculate fuel for the flight?",
-    "How does load factor affect the aileron effectiveness?",
-    "Stability, controllability, manoeuvrability?",
-    "What is adverse yaw?",
-    "Forces on a plane?",
-    "What is electricity? DC? AC?",
-    "Advantages of AC over DC?",
-    "Alternator?",
-    "Electrical system of a 737-800?",
-    "How does Anti-Skid work?",
-    "What is PTU?",
-    "What is RAT?",
-    "Flight controls?"
-  ],
-  "Meteo": [
-    "Warm fronts?",
-    "Cold fronts?",
-    "Fog?",
-    "Thunderstorms?",
-    "Weather radar?",
-    "Referring to ND picture with a cell – would you fly through it?",
-    "If you don't have weather radar what are other signs of bad weather?",
-    "Wind 180/20kt; Runway 27 or 09?",
-    "What is the turbulent layer?",
-    "Thermal inversion and associated weather?",
-    "Crosswind component @ runway 27 with 310/7kt?",
-    "Jetstreams and associated weather?"
-  ],
-  "Flight Planning / Communications": [
-    "At what point in the go around does the alternate fuel begin for planning purposes?",
-    "Describe the components that make up the block fuel?",
-    "In case of a loss in communications, what is your decision making process?"
-  ]
-};
-
-// Data for difficult questions stored locally
-const DIFFICULT_QUESTIONS = {};
-
-// ===== UI State =====
-const contentEl = document.getElementById('content');
-const catListEl = document.getElementById('cat-list');
-const searchEl = document.getElementById('search');
-const quizCategoryEl = document.getElementById('quiz-category');
-const shuffleModeEl = document.getElementById('shuffle-mode');
-const questionBox = document.getElementById('question-box');
-const questionCard = document.getElementById('question-card');
-const questionText = document.getElementById('question-text');
-const quizFlagIcon = document.getElementById('quiz-flag-icon');
-const counterEl = document.getElementById('counter');
-const statusEl = document.getElementById('status');
-const barEl = document.getElementById('bar');
-
-let currentCategory = Object.keys(DATA)[0];
-let filtered = '';
-let isQuizMode = false;
-
-// ===== Render Category List =====
-function renderCatList(){
-  catListEl.innerHTML = '';
-
-  // Add "Domande difficili" category first
-  const difficultQuestionsArray = Object.values(DIFFICULT_QUESTIONS);
-  const difficultCatButton = document.createElement('button');
-  difficultCatButton.className = 'cat' + (currentCategory === 'Difficili' ? ' active' : '');
-  difficultCatButton.innerHTML = `<span>Domande difficili</span><span class="pill">${difficultQuestionsArray.length}</span>`;
-  difficultCatButton.onclick = () => { currentCategory = 'Difficili'; renderCatList(); renderContent(); };
-  catListEl.appendChild(difficultCatButton);
-
-  // Add the rest of the categories
-  Object.entries(DATA).forEach(([cat, arr]) => {
-    const b = document.createElement('button');
-    b.className = 'cat' + (cat===currentCategory?' active':'');
-    b.innerHTML = `<span>${cat}</span><span class="pill">${arr.length}</span>`;
-    b.onclick = () => { currentCategory = cat; renderCatList(); renderContent(); };
-    catListEl.appendChild(b);
-  });
-}
-
-// ===== Render Content (Browse) =====
-function renderContent(){
-  let all = [];
-  if (currentCategory === 'Difficili') {
-      all = Object.values(DIFFICULT_QUESTIONS);
-  } else {
-      all = DATA[currentCategory] || [];
-  }
-
-  const q = filtered.toLowerCase();
-  const shown = q ? all.filter(x => x.toLowerCase().includes(q)) : all;
-
-  // Generate HTML for each question, including the flag icon
-  // FIX: Use encodeURIComponent to handle special characters before btoa, to avoid InvalidCharacterError
-  const questionsHtml = shown.map(x=> {
-      const isDifficult = !!DIFFICULT_QUESTIONS[x];
-      const flagClass = isDifficult ? 'flagged' : '';
-      const encodedQuestion = btoa(encodeURIComponent(x));
-      const flagIcon = `<span class="flag-icon ${flagClass}" onclick="toggleDifficult('${encodedQuestion}')">⭐</span>`;
-      return `<li><span>${x}</span> ${flagIcon}</li>`;
-  }).join('');
-
-  contentEl.innerHTML = `
-    <h2>${currentCategory}</h2>
-    <div class="meta">${shown.length} domande mostrate <span class="pill" style="margin-left:8px">Totale categoria: ${all.length}</span></div>
-    <ol>${questionsHtml}</ol>
-  `;
-}
-
-searchEl.addEventListener('input', (e)=>{ filtered = e.target.value; renderContent(); });
-
-// Toggle difficult question flag, now with Firebase
-async function toggleDifficult(encodedQuestion) {
-  if (!userId) {
-    console.error("User not authenticated. Cannot save difficult question.");
-    return;
-  }
-  // FIX: Use decodeURIComponent to reverse the encoding correctly
-  const question = decodeURIComponent(atob(encodedQuestion));
-
-  if (DIFFICULT_QUESTIONS[question]) {
-      delete DIFFICULT_QUESTIONS[question];
-      try {
-          // Use the encoded string as document ID for safety
-          await deleteDoc(doc(difficultQuestionsCollection, encodedQuestion));
-      } catch(e) {
-          console.error("Error removing document: ", e);
-      }
-  } else {
-      DIFFICULT_QUESTIONS[question] = question;
-      try {
-          // Use the encoded string as document ID for safety
-          await setDoc(doc(difficultQuestionsCollection, encodedQuestion), { question });
-      } catch(e) {
-          console.error("Error adding document: ", e);
-      }
-  }
-  
-  // Rendi il flag visibile anche in modalità quiz
-  if (isQuizMode) {
-      updateQuizFlagIcon();
-  }
-  renderCatList();
-  renderContent();
-}
-
-// ===== Tabs =====
-const tBrowse = document.getElementById('tab-browse');
-const tQuiz = document.getElementById('tab-quiz');
-const browsePanel = document.getElementById('browse-panel');
-const quizPanel = document.getElementById('quiz-panel');
-
-function setTab(tab){
-  isQuizMode = tab==='quiz';
-  const isQuiz = tab==='quiz';
-  tBrowse.classList.toggle('active', !isQuiz);
-  tQuiz.classList.toggle('active', isQuiz);
-  browsePanel.style.display = isQuiz? 'none':'block';
-  quizPanel.style.display = isQuiz? 'block':'none';
-  
-  // Toggle quiz mode layout
-  document.body.classList.toggle('quiz-mode', isQuiz);
-  
-  if (isQuiz) {
-    questionBox.style.display = 'none';
-    questionCard.style.display = 'flex';
-  } else {
-    questionBox.style.display = 'block';
-    questionCard.style.display = 'none';
-  }
-}
-
-tBrowse.onclick = ()=> setTab('browse');
-tQuiz.onclick = ()=> setTab('quiz');
-
-// ===== Quiz Engine =====
-let deck = []; // array di domande (sessione corrente)
-let index = -1; // posizione corrente nel deck
-let history = []; // domande già viste (indici)
-
-function buildDeck(){
-  const cat = quizCategoryEl.value;
-  let questions = [];
-  if(cat === '__ALL__'){
-    Object.values(DATA).forEach(arr => questions.push(...arr));
-  } else if (cat === 'Difficili') {
-    questions = Object.values(DIFFICULT_QUESTIONS);
-  } else {
-    questions = [...(DATA[cat]||[])];
-  }
-  const doShuffle = shuffleModeEl.value === 'true';
-  if(doShuffle){ questions = shuffle(questions); }
-  // Rimuovi duplicati conservando l'ordine
-  questions = [...new Set(questions)];
-  return questions;
-}
-
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]] = [a[j],a[i]];
-  }
-  return a;
-}
-
-function startQuiz(){
-  deck = buildDeck();
-  index = -1;
-  history = [];
-  statusEl.textContent = 'In corso';
-  nextQ();
-}
-
-function nextQ(){
-  if(index+1 >= deck.length){
-    statusEl.textContent = 'Completato ✅';
-    questionText.textContent = 'Hai visto tutte le domande per questa sessione. Premi "Ricomincia" per rifare il quiz.';
-    updateProgress();
-    quizFlagIcon.style.display = 'none';
-    return;
-  }
-  index++;
-  history.push(index);
-  questionText.textContent = deck[index];
-  updateProgress();
-  updateQuizFlagIcon();
-}
-
-function prevQ(){
-  if(history.length<=1) return; // nulla dietro
-  history.pop();
-  index = history[history.length-1];
-  questionText.textContent = deck[index];
-  updateProgress();
-  updateQuizFlagIcon();
-}
-
-function skipQ(){
-  // Metti la domanda corrente in fondo al mazzo se esiste
-  if(index>=0 && index<deck.length){
-    const cur = deck[index];
-    deck.splice(index,1);
-    deck.push(cur);
-    // torna a mostrare la (nuova) posizione corrente (stessa index ora è un nuovo elemento)
-  }
-  // non aggiungere duplicazioni nella history: chiama nextQ che incrementa index
-  nextQ();
-}
-
-function updateProgress(){
-  counterEl.textContent = `${Math.min(index+1, deck.length)} / ${deck.length}`;
-  const pct = deck.length ? (Math.min(index+1, deck.length)/deck.length)*100 : 0;
-  barEl.style.width = pct + '%';
-}
-
-function updateQuizFlagIcon() {
-    const currentQuestion = deck[index];
-    if (DIFFICULT_QUESTIONS[currentQuestion]) {
-        quizFlagIcon.classList.add('flagged');
-    } else {
-        quizFlagIcon.classList.remove('flagged');
+    // Generate / obtain a UID (param 'uid' or localStorage)
+    function getUID() {
+      const url = new URL(window.location.href);
+      const param = url.searchParams.get('uid');
+      if (param) { localStorage.setItem('uid', param); return param; }
+      let uid = localStorage.getItem('uid');
+      if (!uid) { uid = 'guest-' + Math.random().toString(36).slice(2,10); localStorage.setItem('uid', uid); }
+      return uid;
     }
-    quizFlagIcon.style.display = 'inline-block';
-}
+    const UID = getUID();
 
-// Controls
-document.getElementById('start-quiz').onclick = startQuiz;
-document.getElementById('next').onclick = nextQ;
-document.getElementById('prev').onclick = prevQ;
-document.getElementById('skip').onclick = skipQ;
-document.getElementById('restart').onclick = ()=> startQuiz();
+    // Local cache of starred: Map<qid, true>
+    let starred = {};
+    const starRef = (qid=null) => qid ? ref(db, `users/${UID}/starred/${qid}`) : ref(db, `users/${UID}/starred`);
 
-// ===== Init =====
-async function init(){
-  // Authenticate user
-  if (typeof __initial_auth_token !== 'undefined') {
-    await signInWithCustomToken(auth, __initial_auth_token);
-  } else {
-    await signInAnonymously(auth);
-  }
+    // Subscribe to starred
+    onValue(starRef(), (snapshot) => {
+      const val = snapshot.val() || {};
+      starred = val;
+      updateStarUI();
+      if (state.mode === 'hard') buildDeck();
+    }, (err) => { console.warn('Firebase onValue error', err); });
 
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      userId = user.uid;
-      difficultQuestionsCollection = collection(db, 'artifacts', appId, 'users', userId, 'difficult_questions');
-      
-      // Live update from Firestore. This will also handle the initial load.
-      onSnapshot(difficultQuestionsCollection, (querySnapshot) => {
-        Object.keys(DIFFICULT_QUESTIONS).forEach(k => delete DIFFICULT_QUESTIONS[k]);
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            DIFFICULT_QUESTIONS[data.question] = data.question;
-        });
-        renderCatList();
-        renderContent();
-        if (isQuizMode) {
-          updateQuizFlagIcon();
-        }
-      });
-      
-    } else {
-      console.log("No user signed in.");
+    // ==== App Data ====
+    const ALL_QA = [{"question": "RYANAIR TECHNICAL QUESTIONS B737-800/8200 How many seats are on a 737-800?", "answer": "189 seats, 8200: 197 seats"}, {"question": "What type of engines are on a 737-800?", "answer": "The 737-800 has a high-bypass turbofan engine called the CFM56-7B. (27,300 pounds of thrust) 8200: CFM-LEAP-1B"}, {"question": "How many ﬂight attendants are there on a 737-800?", "answer": "There are 4 ﬂight attendants, 1 for every 50 passengers."}, {"question": "Pressurisation of the cabin in cruise on a 737-800?", "answer": "Normally around 6000-8000ft, (between 11-12 psi)."}, {"question": "What is the optimum cruising altitude on a 737-800?", "answer": "The optimum cruising altitude is not a ﬁxed ﬁgure and depends on many factors for example weight, atmospheric conditions (density, temperature, wind), the optimum altitude is the altitude for the best possible fuel eﬃciency in cruise (fuel miles, distance covered against a speciﬁc amount of fuel), found on the FMC or performance sheets."}, {"question": "What are winglets and what advantages do they give on a 737-800?", "answer": "(8” tall, also a source of advertisement) • Winglets lower drag and improve aerodynamic eﬃciency, thus reducing fuel burn, winglets can improve cruise mileage up to 6%. • Winglets on the 737-800 have demonstrated drag reduction in the 5-7% range, which increases range and fuel eﬃciency. • Winglets were proven to be environmental friendly, winglets help lower NOx emissions by 5%. (nitrogen oxide) • Winglets oﬀer better climb performance which also lowers thrust settings, thus extending engine life and reducing maintenance costs, on the take-oﬀ, winglets allow up to 3% incremental de-rate and also allow a steeper climb improving take-oﬀ/climb performance especially from obstacle limited, high, hot, weight limited and noise restricted airports, in the cruise thrust levels are reduced by up to 4%. •Winglets increase the lift generated at the wingtip and reduce the lift induced drag caused by wingtip vortices. (recovery of the wingtip vortices)."}, {"question": "What is the fuel capacity of a 737-800?", "answer": "20,000 kgs, 26000 litres"}, {"question": "What is the range of a 737-800?", "answer": "3000nm, 8200: 3700nm"}, {"question": "What is the FMA?", "answer": "Where is it location? Explain the modes? • The FMA is a ﬂight mode annunciator which indicates what system is controlling the aircraft and what mode is operational. 8000FT9.1PSIMAX • The FMA is located on the top of the captain and ﬁrst oﬃcers PFD (primary ﬂight display) • The FMA is divided into 3 columns and 2 rows, the left column relates to the A/T (auto- throttle), while the centre and right-hand column display roll and pitch modes. The upper row indicates modes are that operational (green), and the lower row indicates modes that are armed (white)."}, {"question": "Icing protection and systems on a 737-800?", "answer": "• Windshield heat – electrically heated, prevents ice building up, also oﬀers protection from bird strikes and hail as the windshield becomes pliable, whereas a cold window is brittle. (speed restriction of 250kts below 10,000ft) • Wing Anti-ice – the wing anti-ice system provides protection for the three inboard leading- edge slats by using bleed air. • Engine Anti-Ice – the engine anti-ice heats the engine cowl to prevent ice build-up, which could break oﬀ and enter the engine. The 737-800 have an elliptical cone shaped spinner which also prevents ice build-up and deﬂects ice away, the engine anti-icing uses bleed air, uses 5th and 9th stage compressor. • Ice detection – an advisory only ice detection system detects airplane icing in ﬂight. The system consists of a probe on the forward left fuselage, when the system detects ice build- up, the ICING light illuminates. • Probe and sensor heat – Pitot probes, total air temperature probes and the alpha vanes are electrically heated, the static ports are not heated."}, {"question": "Can the 737-800 ﬂy in icing conditions?", "answer": "The 737-800 can be dispatched into light and moderate conditions if the PIC and the dispatcher thinks it’s safe, but not into severe."}, {"question": "Emergency exits available to pilots?", "answer": "#2 window on each side, there is also an escape rope."}, {"question": "Max Mach number on a 737-800?", "answer": "Mach 0.82"}, {"question": "What is the cruise speed of a 737-800?", "answer": "MNO 0.78 – 0.80"}, {"question": "What is VNE and what limits it?", "answer": "Never exceed speed, Transport category planes uses VMO and MMO, 737-800 VMO is 480-490 KIAS, it’s limited by structural limit."}, {"question": "Max ceiling of a 737-800?", "answer": "41,000ft Absolute ceiling."}, {"question": "MTOW of a 737-800?", "answer": "78000kg / 172,475 lbs"}, {"question": "How many exits on a 737-800?", "answer": "8 exits."}, {"question": "Which direction does the fan blades rotate on a 737-800?", "answer": "Both engines rotate clockwise."}, {"question": "What is the ratio?", "answer": "The ratio is how much air goes around the engine to how much goes into the core. &gt;ANDWI/DOWFOGCINGV•Li-112◦121-1122•NO13,R} ☆eàFse B737 winglets?• 737-200 Mini-Winglets.• 737 Classic/NG Blended Winglets.• 737 NG Split Scimitar Winglets.• 737 MAX Advanced Technology Winglets.What is cost index?-It’s the ratio of the aircraft operating cost to fuel cost -You get the number from the ﬂight plan and write it into the FMC-It give the speeds for climbs, cruise, descent and it gives optimum altitude -High cost index —&gt; ﬂy fast to stay less in air -B737NG —&gt; 0 - 500 CIWhat is optimum altitude?-Altitude which results in the minimum total trip cost (time/fuel) —&gt; does not depend on fuel burn only-Calculated by FMC, doesn’t count the wind -It increases during the ﬂight as weight decreasesIt is deﬁned as being the pressure altitude which provides the greatest speciﬁc range or fuel mileage at a given weight and speed.✓Ì,"}, {"question": "Does the 737-800 have a critical engine?", "answer": "There is no critical engine on a jet engine, in strong crosswind the upwind engine may act as a critical engine, this is because there is hardly any p factor and the engines are symmetrical plus torque eﬀects on the airframe are not as apparent as in a propeller aircraft."}, {"question": "How does the CFM56-7B engine on the 737-800 work?", "answer": "The air races through the fan that acts like a huge propeller accelerating the air which is separated, so only 20% of the air goes into the engine and 80% of the air is bypassed creating huge thrust. (due to its enormous volume, the air only needs to be accelerate through the bypass duct in order to create thrust) This is the bypass ratio and is about 5:1, 20% of the air that enters the engine goes ﬁrst to the low-pressure compressor that compresses the air so the pressure and temperature rises, then it enters the high-pressure compressor that rotates faster causing the pressure and temperature (450 degrees Celsius) to rise even further. (this is in a convergent duct causing the velocity to rise, venturi eﬀect), It then enters a diﬀuser to lower its velocity, then the air is mixed with fuel and then ignited in the combustor (1700 degrees Celsius) increasing the energy level (more pressure = more energy when heated). The hot air then spins the high-pressure turbines that are connected via shaft to the high-pressure compressors, known as the high spool. Then the air passes through the larger low-pressure turbine that powers the low-pressure compressor, the last turbine powers the fan, ﬁnally the combusted air races down through the exhaust nozzle at the back to be accelerated one more time producing 20% of thrust, the remaining 80% being created by accelerated bypass air. In basic English: A turbine fan is therefore a ﬂow cycle engine, air is compressed then heated by burning fuel, after which it passes through the turbines which drive the compressors and the fan."}, {"question": "Diﬀerences between the 737-800 and the MAX?", "answer": "• New CFM-LEAP-1B Engines which are bigger than the CFM56-7B engines (diameter is bigger by 8 inches), this gives a 9:1 bypass ratio versus 5:1, the maximum thrust is 29,300lbs versus the older engine’s 27,300lbs. • This version is quieter thanks to its new engines, it is also 12% more fuel eﬃcient and 7% reduction in operating costs. • Fly-by-wire spoiler system – improves stopping distances and reduces weights. • Reshaped tail cone – reduces drag giving 1% less in fuel burn. • The cockpit of the 737 MAX is a lot more reﬁned and uncluttered, it has the latest avionics and four large 15-inch LCD screens. • New electronic bleed air system – increased optimisation of the cabin pressure and ice protection systems, giving better fuel burn. (the electric controller allows the aircraft to tune in the amount of air that is needed rather than the all or nothing system. • The thrust line has changed because the engines had to be moved forward and up to accommodate the larger fan diameter. Any handling diﬀerences as a result of this have been tuned out by Boeing in the ﬂight control system to make the types feel the same to ﬂight crew. (necessary to keep certiﬁcation under the same type certiﬁcate) (nose gear strut lengthened by 8 inches to give more engine ground clearance) • The standard wingtips of the MAX are boomerang winglets (currently optional on the 737- 800), the lower split-scimitar winglet aerofoil generates a vertical lift component that is vectored away from the fuselage and also slightly forward increasing the eﬃciency of the wing. (reducing fuel costs) •Also, the 737 MAX has 197 seats compared to the 737-800 which only has 189, a new emergency exit was added, toilets moved back, galley spaces lowered and the seats are slimmer."}, {"question": "Electrical system of a 737-800?", "answer": "• Primary electrical power is provided by two engine integrated drive generators (IDGS) which are rated at 90 KVA (kilo-volt amps) and supply three-phase, 115-volt, 400 cycle (Hz) alternating current. • The battery is a 36 ampere-hour, 24-volt, nickel-cadmium battery and should provide around 30 minutes standby power if all other generators fail. • Auxiliary Battery – This is a reserve battery on the 737NG which is normally isolated unless the main battery is powering the standby system, the auxiliary battery combined with the main battery can provide 60 minutes of standby power. COMPRESSORSARELOCATEDtuaCONUERGENTDVCTVAnulus MCASR↓AUTOMATICTRIMTHATWaitstoFÀFNIRCLUETOPILOTSTHEFEELING-17083ohmSOFFlyinga800"}, {"question": "What is the sweep angle of a 737-800, why this value and not another?", "answer": "The sweep angle of a 737- 800 is 25 degrees."}, {"question": "Do you know how many sectors we ﬂy per day?", "answer": "2-4 depending on length of journey."}, {"question": "Rejected take-oﬀ procedure on MCC?", "answer": "• If a failure occurs before 80kts, we will stop for any malfunction. • If a failure occurs after 80kts and before V1, we will only stop for a severe malfunction. • If a failure occurs at and after v1, we will continue the date oﬀ and deal with the problem in the air. • In the event of a failure before 80kts, either pilot can call “stop”, after 80kts only the captain can call STOP or GO. • For “stop”, the captain will stop the aircraft by simultaneously applying maximum brake pressure, retard the thrust levers &amp; disconnect the A/T, manually select speed brakes UP and apply maximum reverse thrust, when the aircraft has stopped, he will set the parking brake and call the cabin crew to their stations. • The ﬁrst oﬃcer will monitor the captain’s RTO actions and call any omissions, call ATC to say that we are stopping. When the aircraft has stopped, select ﬂaps to 40 degrees, select “MAN” on the pressurisation panel and open the outﬂow valve."}, {"question": "Hydraulic pressure for 737-800?", "answer": "• Normal hydraulic pressure is 3000 psi • Minimum hydraulic pressure is 2800 psi • Maximum hydraulic pressure is 3500 psi • Normal brake accumulator pre-charge is 1000psi"}, {"question": "How are control surfaces operated on a 737-800?", "answer": "Primary ﬂight controls linked mechanically to hydraulic power control units which command the primary ﬂight control surfaces: ailerons, elevators and rudder, the ﬂight controls are powered by system A and system B."}, {"question": "How many hydraulic systems does the 737-800 have?", "answer": "What do they operate? Either A or B hydraulic system can power all ﬂight controls with no decrease in airplane controllability. Both A and B hydraulic systems have an engine-driven pump and an AC electric motor-driven pump. (The system A engine-driven pump is powered by No.1 engine, and the system B engine-driven pump is powered by No.2 engine.) The standby hydraulic system is provided as a backup if system A and/or B pressure is lost, the standby system uses a single electric motor-driven pump. The power transfer unit can be used to supply the additional volume of hydraulic ﬂuid needed to operate the auto-slats and leading-edge ﬂaps and slats at a normal rate when system B engine- driven hydraulic pump volume is lost. (same for the landing gear transfer unit pump if system A engine-driven hydraulic pump volume is lost.)"}, {"question": "What leading edge devices are on a 737-800?", "answer": "4 Krueger ﬂaps inboard of the engines, and 8 slats outside of the engines (the ﬂaps and slats are high lift devices that increase wing lift and decrease stall speed during take-oﬀ, low speed manoeuvring and landing.) -Sweep angle is a value calculated on normal operating speed range of the aircraft.-The 737 has much less sweep than its predecessors (25º compared to 35º on the 727) because speed was not considered important for a short range jet.-A320 has angle of 25° also —&gt; because they ﬂy approx at the same speed] fini/GWing&gt;0/4THE31/BOARDHAVEA/TI-ICE"}, {"question": "What trailing edge devices are on a 737-800?", "answer": "The trailing edge devices consist of double slotted ﬂaps inboard and outboard of each engine."}, {"question": "What do you know about 737-800?", "answer": "Boeing 737 is a mid-size, short to medium range ﬂights. The ﬁrst 737-100 ﬂew in 1967 and entered into service in 1968. In the 1980s Boeing launched the versions: -300 -400 -500, and in the 1990s launched the Next GeneraEon Boeing 737-700. Boeing 737-800 is also called Next GeneraEon, because is an evolution of the Boeing 737 Classic. It has new wings, with optional winglets, full eﬁs cockpit and new interiors. The wing was redesigned with a new airfoil, greater chord, increased wing span and area of 25% that increases of the 30% the fuel capacity. The range is increased of 900 NM, now permitting transcontinental service. High MTOW, and a redesigned vertical stabilizer, and winglets were available on most models. The ﬂight deck was upgraded with modern avionics, and passenger cabin improvements similar to those on the Boeing 777."}, {"question": "How is the landing gear operated in a 737 NG?", "answer": "The B737 has two main gear and a nose gear. Each main gear is a two-wheel landing gear unit. The nose gear is a steerable two-wheel unit. Hydraulic power for retraction, extension, and nose wheel steering is normally supplied by hydraulic system A. A manual landing gear extensions system and an alternate source of hydraulic power for nose wheel steering is also provided. The normal brake system is powered by hydraulic system B. The alternate brake system is powered by hydraulic system A. Antiskid protection is provided on both brake systems, but auto brake system is available only with the normal brake system. The landing gear are controlled by the landing gear level."}, {"question": "What is wingspan on Boeing 737-800?", "answer": "The wingspan is 35,79 meters."}, {"question": "How much voltage does the engine produces?", "answer": "And how much hertz? 115V and 400 HZ."}, {"question": "What is the Hertz when the engine doesn’t rotate fast?", "answer": "SEll 400HZ. What is the G limit of the 737-800: With ﬂaps up: +2.5G / -1.0G With ﬂaps : +2.0G / 0.0G"}, {"question": "What kind of elevator system the 737 has?", "answer": "The elevators in the 737 are hydraulically powered. The elevators need only one hydraulic system (A or B) to work. In the event of failure of both hydraulic system, elevators can be moved electrically. Elevator feel is created by a computer that with the input of the airspeed and the stabilizer position enable the computer to simulate the aerodynamic force. Also a Mach trim provides speed stability above Mach .615. The elevators are adjusted nose up in a programmed manner with respect to the stabilizer position. Engagement and disengagement is automatic. •ADDSONEINFOABOUTHOWMANOFTHENAREOFANDuttoFLIESTHEN E36M ELEVATORSMOUEDMA/UALLY,STABILIZERELECTRICAL(y(TRIM)e"}, {"question": "Does the engine on the 737 rotate in the same direction?", "answer": "Yes."}, {"question": "What navigation systems are on a 737-800?", "answer": "Compass, ADF , IRS, DME, VOR, GPS, INS/IRS"}, {"question": "Electrical system of a 737-800?", "answer": "• Primary electrical power is provided by two engine integrated drive generators (IDGS) which are rated at 90 KVA (kilo-volt amps) and supply three-phase, 115-volt, 400 cycle (Hz) alternating current. • The battery is a 36 ampere-hour, 24-volt, nickel-cadmium battery and should provide around 30 minutes standby power if all other generators fail."}, {"question": "PRINCIPLES OF FLIGHT What is Mcrit?", "answer": "Mcrit is the aircraft’s speed at which the airﬂow over a wing becomes sonic. Characteristics: - Mach buﬀet because of the shock waves on the wing - Increase of drag requiring a pull force - Mach tuck - A possible loss of control"}, {"question": "What is Mach Tuck?", "answer": "Mach tuck is the nose down pitching moment that an aircraft experiences as it passes its critical Mach Number. Mach tuck is a form of longitudinal instability that occurs because of the center of pressure’s rearward movement behind the center of gravity, which induces the aircraft to pitch down."}, {"question": "What is Mach Trimmer?", "answer": "Mach trimmers is a system that artiﬁcially corrects for mach tuck above the aircraft’s Mcrit by sensing the aircraft speed and signaling a proportional upward movement of the elevator or variable-incidence stabilizer -Mcrit does not equal Mach 1.0. Aircraft&#x27;s Mach numberS&quot;+EREINTHEa/c(usualcyTHEWwa) in order to maintain aircraft’s pitch attitude throughout its speed range up to its maximum demonstrated diving speed (Vmdf)."}, {"question": "Why does some aircraft have winglets?", "answer": "Winglets are aerodynamically eﬃcient surfaces located at the wing Eps. They are designated to reduce induced drag dispensing the airﬂow from the upper and lower surfaces of the wing on diﬀerent points, thus preventing the intermixing of these airﬂows that otherwise would create induced drag vortices."}, {"question": "How would you load an aircraft to gain maximum range?", "answer": "An AFT CG position will allow an aircraft to gain its maximum range. It could be done using the a8 cargo hold. In this case the stabilizer can be streamlined to the airfoils, producing no relevant drag. In addition, with an AFT CG position, it is increased aircraft’s overall lift capabilities."}, {"question": "What is coﬃn corner?", "answer": "Coﬃn corner occurs at an aircraft’s absolute ceiling, where the speeds at which Mach number buﬀet and pre stall buﬀet occurs are coincident. Therefore, a margin is imposed between an aircraft’s operating and absolute ceiling."}, {"question": "Describe the wing of a jet?", "answer": "The wing of the jet is thin, minimal-chamber, swept wing."}, {"question": "What advantages/disadvantages are there with swept wings?", "answer": "The advantages are: High Mach cruise speed because the wing delays the airﬂow over the wing from going supersonic and allows the aircraft to maximize the jet engine’s potential for higher Mach cruise speed. Also a swept wing is designated with a minimal chamber and thickness, thereby reducing proﬁle drag, which further increases the wing’s ability for higher speeds. Stability in turbulence, because the swept wing’s produces less li8 and therefore is less responsive to up draughts. The disadvantages are: Poor lift qualities, because the design of the wing has the eﬀect of reducing the lift capabilities of the wing. Higher stall speed, consequence of the poor lift qualities. Speed instability, second consequence of poor lift qualities at lower speeds. Speed is unstable below minimum drag speed , where power is required with reducing speed. Wing-tip stalling, because of the high local CL. This could be solved by a greater chamber on the tip section, or with the twisting (washout) which creates a lower angle of incidence at the wing tip. By making the wing more eﬃcient, winglets reduce approach speeds as well, improving landing performance(i.e. due to lower touchdown speeds) Stall speed =(circa) Max operating speedIncrease in speed —&gt; overspeed Decrease in speed —&gt; stall •AERODY/AMICWASHOUT:-CAMBERANDSHAPECHANCE,CHORDAILEDOESN&#x27;TCHANCE•GEOMETRIEWASHOUT:-CHORDLINEA/CIECHANCES,CAMBERDOESNOT"}, {"question": "Why does a wing stall?", "answer": "An aircraft stalls when the laminar airﬂow over the wing’s upper surface, which produces li8, breaks away from the surface when the critical angle of a[ack is exceeded, and becomes turbulent, causing a loss in li8. In a swept wing it stalls ﬁrst at the Ep."}, {"question": "Where does a wing stall?", "answer": "Wing stall at the tip ﬁrst, the centre of pressure will move inward and forward thus creating a pitch up tendency."}, {"question": "Why do we have winglets on Boeing 737-800 and how much percentage do they improve your performance?", "answer": "Because winglets reduce induced drag, increasing the range, increasing performances between 4 to 6 percent."}, {"question": "If you get in a spin, what is best?", "answer": "A fwd/mid/aft CG? Forward CG, because the further forward the center of gravity less readily the airplane will spin, and the more readily it will recover from the spin"}, {"question": "Advantage of a T-tail and disadvantages?", "answer": "Advantages: a t-tail increases the elevator eﬃciency by giving a larger eﬀective span. High elevator eﬀectiveness is required for high li8 wings o8en mounted above the fuselage, thus the tail has to be out of the down wash. Disadvantages: in all t-tailed aircraft there is the possibility of deep stall, where the elevator/stabilizer becomes stalled and the nose becomes impossible to push over, thus causing the plane to remain in a stalled condition, certain aircraft overcome this by ﬁns or strakes on the fuselage. -It’s a requirement for fuselage mounted engines -Makes the stabilizer free from turbolent ﬂow from fuselage and wing—&gt; more eﬃciencySWEPTWING↑ % 㱺DEEPSTALL"}, {"question": "What is the angle called between the body and the wing?", "answer": "Dihedral."}, {"question": "Why some aircrafts doesn’t need a dihedral?", "answer": "Because the CG is located beneath the wing. Explain manouvering speed This is the highest speed at which full ﬂight controls deﬂection can be made without exceeding the limit load factor. Up to this speed, if the load factor is exceeded the aircraft will stall before sustaining any structural damage. Otherwise at speeds above Va high load factors could lead to a structural damage. Va varies with aircraft’s weight."}, {"question": "What do spoilers do?", "answer": "Spoilers consist of opening panels that extend from the upper surface of the wing and have the eﬀect of spoiling/disturbing the airﬂow over the wing, creating drag that reduces li8. They can be used for roll control (spoilers are raised on one wing and not on the other, which creates an imbalance of li8 values that produce a rolling moment), as air speed brakes (they air raised symmetrically on both wings to a ﬂight detent position which cause a large increase in drag that slows down the speed of the aircraft) and as ground li8 dumpers (they are raised symmetrically thus causing a large increase in drag decreasing li8 over the wing and causing the aircraft to sink on the ground)."}, {"question": "What is Dutch roll?", "answer": "Dutch roll is an oscillatory instability associated with swept-wing jet aircraft, a combination of yawing and rolling motions. It occurs when a yaw is induced either by a natural disturbance or by a commanded or an uncommanded yaw input on a swept wing aircraft. This cause the outer wing to run faster thus creating more li8 because of the increased angle of a[ack. At the same time, the inner wing will travel slower and become more swept relative to the airﬂow, reducing its li8. Therefore a marked bank occurs to the point where the outer upward moving wing exceeds its critical angle of a[ack, stalls and loses all li8. The wing will drop causing a yaw to the dropped wing and thus leading to the sequence being repeated in the opposite direction."}, {"question": "What is a yaw damper?", "answer": "A yaw damper is a gyro system that is sensitive to changes in yaw, and it feeds a signal into the rudder, which applies opposite rudder to the yaw before the roll occurs thus preventing dutch roll.and eventually a roll. -Wing dihedral has a disadvantage of increased fuel consumption-This is because the vertical component of lift (which is what gets the aircraft oﬀ the ground and keeps it ﬂying)is reduced due to the upward inclination of the wings (creates an horizontal component of lift as well, which isof no beneﬁt)-However, this increase in fuel consumption is usually negligible at small dihedral angles •ALREADYHAVECATERALSTABILITY •HIGHLATERALSTABILITY•LOWDIRECTIONALSTABILITY Dihedral wings Dihedral is the upward inclination of a wing from the root to the tip. The sideslip conditions produce greater angle of attack on the forward-yawed wing and smaller angle of a[ack on the rearward-yawed wing. As greater angle of attack produces more lift (in the usual case, when the wing is not near stalling), the forward wing will have more lift and the rearward wing will have less lift. This diﬀerence in lift between the wings is a rolling moment, and since it is caused by sideslip, it is dihedral eﬀect (or more correctly, it is a contribution to the total dihedral eﬀect of the aircraft)."}, {"question": "Why does Dutch roll happen?", "answer": "In a jet aircraft with swept wings, when the aircraft yaws, the wing moving somewhat “forward” becomes subject to extra lift, raising that wing, and the consequence is extra drag, this then pulls that wing back, and the aircrafts opposite wing then moves forward..."}, {"question": "How would you recover from Dutch roll without a yaw damper?", "answer": "The aircraft is more prone to Dutch roll at a higher altitude, as altitude (and therefore TAS) increases, the directional stability reduces at a greater rate than lateral stability, the correction would be to ﬂy low and slow, the denser the air, the more damping there is, which means the yaw oscillations will die out quicker."}, {"question": "What is the sweep angle of a 737-800, why this value and not another?", "answer": "The sweep angle of a 737- 800 is 25 degrees."}, {"question": "What are the advantages of a swept wing?", "answer": "• More lateral stability. (turbulence/friction) • Higher speed. • Lower drag at higher speed – lower fuel burn. • Increase in MCRIT • Delays airﬂow from going supersonic over the wing. (stops shockwaves which creates huge amount of drag)"}, {"question": "What are the disadvantages of a swept wing?", "answer": "• Poor lift qualities • Higher stall speeds (consequence of the poor lift qualities) • Speed instability at slow speeds • Tendency to stall at the wingtip ﬁrst."}, {"question": "What is added to a swept wing to increase its lift capabilities?", "answer": "• Slats, slots, ﬂaps (trailing and leading edge, Fowler and Krueger) ********* by reducing the chordwise ﬂow and increasing the spa wise ﬂowSIDESLIP↓&gt;④È→↓↑MORELIFT→INDUCEDDRAG"}, {"question": "Diﬀerence between leading edge slats and ﬂaps?", "answer": "(both used in low-speed situations) • Slats produce a slot somewhat aft of the leading edge in order to allow high-speed air from below the wing to pass through and maintain laminar ﬂow to a somewhat higher AoA. • Flaps are devices on the leading edge (Krueger) which increase camber and the depth of the wing to reduce stalling speed and increase lift. (used in the root of the wings) They are similar to slats but they are deployed diﬀerently and are hinged, used to produce same amount of lift at a lower airspeed. •Main idea is to encourage the wing roots to stall before the tips as slats delay the stall better."}, {"question": "High drag devices on a wing?", "answer": "Trailing edge ﬂaps (in a higher drag/lower lift position), spoilers (used inﬂight as speed-brakes, on ground as lift dumpers.), landing gear, thrust reversers."}, {"question": "What is drag?", "answer": "Drag is the aerodynamic force that opposes an aircraft’s motion through the air."}, {"question": "Where does a straight wing stall?", "answer": "At the wing root, which is good because the aircraft will keep aileron authority, also causes a pitch down eﬀect which is good."}, {"question": "Can we keep sweeping a wing back?", "answer": "If the angle of sweep is increased, the stall speed is also increased."}, {"question": "Drag on a swept wing?", "answer": "• Induced drag is reduced as a swept wing has poor lift capabilities, especially at lower speed. • Wave drag is reduced due to the MCRIT being increased. • Proﬁle drag is reduced as proﬁle drag increases directly with speed, but the wing of a swept wing has a slower local air velocity (makes the wing feel like it’s going slower) ⑨WITHTHEHECPOFWASHOUT(RECTANGULARWINGS) &gt;ALSOBECAUSEIT&#x27;STHU,WITHLOUCAMBER"}, {"question": "What is a spoiler?", "answer": "Spoilers are panels mounted on the upper surface of the wing, when extended, both increase drag and decrease lift by disrupting airﬂow over the wing. Spoilers can serve as; ground spoilers, roll spoilers, speed brakes."}, {"question": "Where does a swept wing stall?", "answer": "At the wing tip due to the span-wise ﬂow over the wing, which is bad because the loss of lift at the wing tips causes an undesirable nose up eﬀect, also losing aileron eﬀectiveness. Vortex generators can help to maintain control of the ailerons whilst the rest of the wing is stalled, the solution to wing tip stall is washout/wing-twist. (increase camber at the wingtip, delaying the stall) Vortex Generators? There are 3 fences on the underside of each wings leading edge slats, the angle of the plate causes the air to swirl and create a vortex behind it, this eﬀect allows the airﬂow to remain attached. They let you use the ailerons when the rest of the wing is stalled, encourage laminar ﬂow and discourage stalls."}, {"question": "Critical angle of attack?", "answer": "The critical angle of attack is the angle which produces the maximum lift coeﬃcient (stall angle of attack) airﬂow begins to separate from the upper surface."}, {"question": "Dihedral vs Anhedral?", "answer": "Dihedral wings are inclined upwards and increase the stability of the aircraft in the roll axis, (in a roll the aircraft wants to return back to level ﬂight) also engines are located on the bottom of the wing, dihedral oﬀers a convenient way of making more room, greater clearance between wingtips too). Anhedral is commonly found in ﬁghter aircraft, it provides more manoeuvrability. (high wing aircraft use Anhedral as its too stable anyway, low wing aircraft use dihedral to make it more stable)"}, {"question": "What is centre of gravity?", "answer": "The centre of gravity is the point through which the total weight of a body will act."}, {"question": "What is wing load and how can we control it?", "answer": "Wind loading is the total mass of an aircraft divided by the area of its wing. High wing loading will need greater take-oﬀ and landing distances (because they will have a higher stall speed) but will be more stable in turbulence and will have less manoeuvrability. The more loading of a wing, the more lift it must produce. (low mass, large wings = low wing loading). (can increase it by increasing the area of the wing using ﬂaps, slats etc.) The amount of spanwise ﬂow compounds as you approach the wingtip, decreasing the wingtip&#x27;s effective airspeed and thickening the boundary layer. This can cause the wingtip to stall before the wing root - meaning you lose aileron control at the onset of the stall. That could make for a wild ride.To counter this, engineer&#x27;s place ﬂow fences on the wing to stop the spanwise ﬂow from building up Forward Center of Gravity increases stall speed due to greater downward force required by thestabilizer, whereas an aft Center of Gravity reduces stall speed due to less downward force required by thestabilizer["}, {"question": "Low wing vs High wing?", "answer": "• High wing aircraft oﬀer better visibility, very good ground clearance, high wing aircraft have better roll stability due to their centre of gravity located under the centre of pressure, if an airplane sideslips to the right, the resultant airﬂow will act on the wings from the right side. This increases the lift it produces; the result is the aircraft returning to level ﬂight. (can add manoeuvrability with Anhedral wings too) The high wing aircraft can encounter less ground eﬀect on take-oﬀ. (generally, has a smaller landing distance as well, also its better for cargo as no spar gets in the way) (pendulum eﬀect) (does not require fuel pumps) • Low wing aircraft has advantage in water landings as the wings can keep the fuselage above the water, it can be used to step out onto the wings for over-wing exits, the main gear can be lower. Maintenance is more straight forward and refuelling is easily accessible, and also it doesn’t block any of the cabin. Also, a low wing aircraft is more stable on the ground."}, {"question": "What is MCRIT?", "answer": "(critical Mach number) The lowest Mach number at which the airﬂow over any part of the aircraft reaches the speed of sound."}, {"question": "What determines the MCRIT?", "answer": "The critical Mach number is dependant on the thickness of the wing (a thin wing will have a higher MCRIT), the camber of a wing (a higher cambered wing will reach sonic speed earlier, as the air accelerates faster over the wing), weight of the aircraft (heavy aircraft would require more lift, which means greater acceleration over the wing, which means lower MCRIT, vice versa for light aircraft)"}, {"question": "How does a swept wing increase the MCRIT?", "answer": "In a swept wing, the air ﬂows at an angle (instead of perpendicular on a straight wing), this increases the eﬀective chord of the wing, but the wings thickness remains unchanged, so this reduces the thickness/chord ratio of the wing which results in a higher MCRIT and delays shockwave formation, in a swept wing, the airﬂow is divided into two parts, the span-wise ﬂow and the chordwise ﬂow meaning the chordwise ﬂow will be slower, so we can increase the aircraft speed without hitting supersonic speeds over the wing (increasing MCRIT)"}, {"question": "How would you design a high-speed wing?", "answer": "• Swept Wing (increases MCRIT) • Minimal camber (increases MCRIT) •Thin wing (increases MCRIT)"}, {"question": "What is Mach Tuck?", "answer": "When airﬂow over the wings reaches the LSS, shock waves form, air ﬂowing through these shockwaves experience a sudden increase in static pressure, this sudden pressure increase causes sudden deceleration which tends to cause the airﬂow to separate from the wing just behind the shockwave, the overall eﬀect is a loss of lift and an increase in drag. (shock stall) •ASSPEEDINCREASESTHROUGHTransRec.,CPMOVESAtt)PITCH&#x27;/CDownMOMENT The shock waves form ﬁrst at the wing roots where the chord provides the biggest acceleration, meaning that the shock stall aﬀects the wing root before the wing tip, so the loss of lift due to shock stall at the wing roots causes the centre of pressure to move rearwards, this causes the aircraft to pitch down – Mach tuck."}, {"question": "What is a Mach Trimmer?", "answer": "The Mach trimmer is a system that resists the nose down tendency of Mach tuck."}, {"question": "How does a Mach Trimmer work?", "answer": "Mach Trim is accomplished automatically above Mach .615 by sensing the aircraft’s speed and in turn moving the stabilizer to maintain the aircrafts pitch attitude. (tuck under makes the aircraft nose down, the Mach trimmer pulls it up to level ﬂight) Also, there is another way, we can move the centre of gravity of the aircraft by moving the fuel into the rear tanks which would also trims nose up. Coﬃn Corner? (aerodynamic ceiling) (occurs at absolute ceiling) Coﬃn Corner is the area of the speed envelope where the low-speed buﬀet and the high-speed buﬀet come close together. (stall speed and max Mach speed) • As altitude increases, air density, and thus lift decreases, therefore the stall speed increases, this deﬁnes the lower speed limit at which an aircraft can operate. (low speed buﬀet) • As altitude increases, temperature decreases, so the speed of sound decreases, so the critical Mach number also decreases. (high speed buﬀet) • The aircraft can not ﬂy faster due to high speed buﬀet, and can not ﬂy slower due to low speed buﬀet, making it diﬃcult to control during turbulence or descending. (stall or MCRIT) • With an increase in weight, stalling speed also increases so the margin for the coﬃn corner is less."}, {"question": "How does a wing work and how is lift created?", "answer": "• An aerofoil generates lift by exerting a downward force on the air as it ﬂows past. (newtons) • As the velocity changes around an object, the pressure changes as well, the pressure on the upper surface where the ﬂow is moving faster is lower than the pressure on the lower surface where it is moving slower. • The airﬂow follows the curvature of the aerofoil (downwards), the upper surface is moving faster, so causes the aerofoil exerting a downward force generating lift. Lift is created due to air pressure diﬀerences between the lower and the upper surfaces of the wing, which arecaused due to the curvature of the wing that generates a Venturi tube eﬀect (high pressure air below the wing moving towards low pressure air above the wing).The greater the curvature of the wing, the greater its lift capability.&gt;CRITICALLREDUCES,V5INCREASE -Each aircraft is designed to stall at a speciﬁc angle of attack (for a given conﬁguration) and can stall at any airspeed, attitude or altitude if this critical angle of attack is exceeded-However, at high altitudes and high M, critical angle of attack reduces and stall speed increases. This is due to wing reaching its lift capability limits at high M-Also, in case of airframe icing, the critical angle of attack may be reduced-Wing conﬁguration has an impact on critical angle of attack as well. Extension of leading edge slats and ﬂaps increases the critical angle of attack, whereas extension of trailing edge ﬂaps reduces the critical angle of attackSTICKSHACKERMAYNOT&gt;ACTIUATEDUETOREDUCESCRITICAL✗THATHASALREADYBeerEXEDEED"}, {"question": "Why is critical angle of attack reduced when extending trailing edge ﬂaps?", "answer": "-A wing will stall when it reaches the critical angle of attack, which is the angle at which the wing has reached its maximum lift capability (Clmax)-When we extend trailing edge ﬂaps, Clmax increases and, for a given angle of attack, Lift produced by the wings increases as well-However, the wings are not able to sustain this higher lift up to the same angle of attack that they can when the ﬂaps are up-This means that although Clmax increases, it is achieved at a lower angle of attack (critical angle) than it is achieved with ﬂaps up and therefore, critical angle of attack decreasesHow does stall speed change in a banked turn?Stall speed varies directly with the square root of load factorLoad factor = Lift / Weight or 1 / cos bank angleWhat are the secondary ﬂight controls?FlapsSlatsSpoilersStabilizerHow does load factor aﬀect the aileron eﬀectiveness?The higher the load factor (G load) the lower the aileron eﬀectivenessThis means that at high bank angles and G loads, more force in control column would be required in order to roll wings level During a nose high upset recovery, why is it important to reduce pitch attitude ﬁrst before rolling wings level?Bank angle helps the nose to fall and reduce pitch attitude,this is because when wings are not level, the vertical component of lift, which acts directly opposite to weight force, is reduced.During a nose low upset recovery, why is it important to level wings before increasing pitch attitude?How does parasite drag and induced drag vary with speed during level ﬂight?-Parasite drag increases with increasing speed-Induced drag increases with increasing angle of attack, which leads to an increased coeﬃcient of lift (CI). As CI increases, speed needs to be reduced in order to maintain the same amount of lift"}, {"question": "Does the center of gravity remain constant throughout the ﬂight?", "answer": "No, it changes as a result of:-Fuel burn-Passenger movementStability, controllability, manoeuvrability?-High stability= high controllability, low manoeuvrability -Low stability= low controllability, high manoeuvrability"}, {"question": "What is adverse yaw?", "answer": "Adverse yaw is the natural and undesirable tendency for an aircraft to yaw in the opposite direction of a roll, caused by the down going aileron creating more drag than the up going aileron, the solution to this is diﬀerential or frise type ailerons."}, {"question": "Forces on a plane?", "answer": "Lift, weight, drag and thrust."}, {"question": "ELECTRICS What is electricity?", "answer": "Electricity is the movement of electrons that produces a power. DC Direct current electrical power ﬂows in only one direction around a circuit and has no appreciable variation in its amplitude. AC Alternate current continuously reverses its direction of ﬂow in an electric circuit. The complete reversal of current is known as a cycle and occurs very rapidly. Advantages of AC over DC 1. AC generators are simpler and more robust in construction than the dc machines. 2. The power-to-weight ratio of AC machines is much better than DC’s. 3. The supply voltage can be converted to a higher or lower value with great eﬃciency using transformers. 4. Any required DC voltage can be obtained simply and eﬃciently by using transformer-rectiﬁer units. 5. Three-phase ac motors can be operated from a constant frequency source (alternator). 6. AC generators do not suﬀer from communication problems associated with DC machines and consequently are more reliable, especially at high altitudes. 7. High-voltage AC systems require less cable weight than comparable power low-voltage dc systems. Alternator 1. Produces AC power at speciﬁed frequency by electromagnetic induction 2. Coil rotate with respective magnetic ﬁeld // magnetic ﬁeld with respect to the coil 3. ROTOR rotating magnetic ﬂux (induce electricity in) ARMATURE coils are stationary"}, {"question": "Electrical system of a 737-800?", "answer": "• Primary electrical power is provided by two engine integrated drive generators (IDGS) which are rated at 90 KVA (kilo-volt amps) and supply three-phase, 115-volt, 400 cycle (Hz) alternating current. • The battery is a 36 ampere-hour, 24-volt, nickel-cadmium battery and should provide around 30 minutes standby power if all other generators fail. •Auxiliary Battery – This is a reserve battery on the 737NG which is normally isolated unless the main battery is powering the standby system, the auxiliary battery combined with the main battery can provide 60 minutes of standby power."}, {"question": "Diﬀerence between AC and DC?", "answer": "(alternating current is the best way to transmit electricity over large distances) (AC is produced using an alternator) • DC cannot travel very far until it begins to lose energy, but AC can travel and prove more power. • DC electrons ﬂows in one direction in the circuit, AC electrons reverses its direction while ﬂowing in a circuit. • Frequency of DC is 0 Hz, the frequency of AC is 50Hz or 60Hz depending on the country. • DC can be stored, for example in batteries, AC can not be stored. (but can be changed to AC using an inverter)"}, {"question": "What is Hertz?", "answer": "Hertz (Hz) is a unit derived from time which measures frequency, frequency is how often something happens... a frequency of 1 Hz means that something happens every 1 second. (e.g. a piano has 262 Hz, meaning there is 262 vibrations per second."}, {"question": "Explain volts and amps?", "answer": "Which one will electrocute you? • A potential diﬀerence, also called Voltage, across an electrical component is needed to make a current ﬂow through it. (cells or batteries often provide the potential diﬀerence needed) (it is the push that causes charges to move in a wire) • Current is a measure of how much electrical charge ﬂows through a circuit, the more charge that ﬂows, the bigger the current. Current is measured in amps. (amperes) •The amps are how much, and the volts are how much force behind it, it’s the amps that kill you... (for example if you are cut by a pressure washer, technically it’s the water that cuts you but it’s the force behind the water that actually cuts you... same thing applies, volts is the pressure, while amps is the water.)"}, {"question": "Plug socket in the wall?", "answer": "The electric supply in Ireland and UK is 230volts, 50Hz"}, {"question": "POWERPLANT How does the jet engine works?", "answer": "All jet engines, which are also called gas turbine, work on the same principle. The engine sucks the air in the front with a fan. Than a compressor raises the pressure of the air. The compressor is made up of fans with many blades a[ached to a shaft. The blades compress the air, than the air is sprayed with fuel and an electric spark lights the mixture. The burning gases expand and blast out through the nozzle, at the back of the engine. As the jets of the gas shoot backward, the engine and the aircraft are thrust forward. CFM56-7B high bypass ratio – Primary ﬂow passes through the combustor and secondary ﬂow passes only through the fan. 80%"}, {"question": "Why do we have turbo chargers?", "answer": "And how do they work? A turbocharger is a centrifugal compressor powered by a high speed turbine that is driven by an engine’s exhaust gases. Its beneﬁt lies with the compressor increasing the mass of air entering the engine (forced induction), resulting in greater performance."}, {"question": "What is a Supercharger?", "answer": "What is the diﬀerence between Turbo and Supercharger? A supercharger increases the air delivered to the engine cylinder above its normal aspirated capacity by compressing the intake air, which in turn requires more fuel to be delivered to the carburettor to maintain the correct mixture ratio, which in turn produces a greater power output. The diﬀerence between turbo and supercharger is that superchargers are not powered by exhaust gases but are connected directly or indirectly to an engine. A superchargers uses mechanical energy from the engine to drive the supercharger. In comparison a turbochargers does not place a direct mechanical load on an engine, it is more eﬃcient because it converts the waste heat of the exhaust gas into horsepower used to drive the compressor."}, {"question": "Explain carburettor icing?", "answer": "Ice formation can occur in the engine induction system and in the carburettor of piston engines, particularly in the venturi and around the throttle valve, where acceleration of the air can produce a temperature fall. This combined with the heat absorbed as the fuel evaporates, can cause serious icing, even where there is no visible moisture present. It is more likely to occur with low power settings when the part ally closed butterﬂy creates its own venturi cooling eﬀect. Carburettor icing should be expected in a piston engine when the outside temperature is between -10°C and +30°C with a high humidity and or visible moisture present in the air. Thermal eﬃciencyEﬃciency at which fuel energy is converted into kinetic energy Total eﬃciencyChemical power transformed into propulsive powerVONLYFORSTART,THENITAUTO-IGNITES •IT0114HASTHECOMPRESSOR•MORERESPONSIVEi•TURBOISSLOWBisitNEEDSTIMEFORTHEEXHAUSTCASES&gt;TURBOLAG•SUPERISFASTBCSOFDIRECTLI/K |•DACARBUROAIPISTONICHESIMUOVONO ◦DALCARBUROALLOSPOSTAMENTO"}, {"question": "What is propulsive eﬃciency?", "answer": "Propulsive eﬃciency is the eﬃciency, in percent, with which the energy contained in a vehicle’s propellant is converted into useful energy, to replace losses due to air drag, gravity and acceleration."}, {"question": "What is Fadec?", "answer": "Fadec is full authority digital engine control and is a system that automatically controls engine functions. Fadec is a system consisting of digital computer, called ECU (engine control unit) and its related accessories that control all aspects of aircraft engine performance. Fadec works by receiving multiple input variables of the current ﬂight condition. The inputs are received by ECU and analized up to 70 times per second. The fadec basic purpose is to provide optimum engine eﬃciency for a given ﬂight condition."}, {"question": "Explain high bypass engine?", "answer": "The bypass engine involves a division of the airﬂow. All the air entering into the engine is given to an initial low compression, and a percentage is then ducted to bypass the engine core. The remainder of the air is delivered to the combustion chamber. The bypass air is then either mixed with the hot airﬂow from the engine core in the jet pipe exhaust or a8er it has been discharged to atmosphere to generate a resulting forward thrust force. The high bypass ratio is 5:1."}, {"question": "What is a critical engine?", "answer": "The engine that most adversely aﬀects directional control of the aircraft The critical engine is the engine that determines the critical control speed of the aircraft. Normally is the number 1 engine in clockwise rotating propeller engines for 2 reasons: -Slipstream eﬀect: the slipstream from the number 2 engine will produce a sideways force that aggravates the yawing moment, resulting in a more critical situation. Therefore, a greater control force is required, resulting in a need for a higher critical speed to make the rudder more eﬀective during a number 1 engine failure. -Asymmetric blade eﬀect: on the ﬁn Propeller blades produce more thrust in the downward rotaEon than in the upward, therefore the point through which the thrust acts will be displaced toward the down-going blade."}, {"question": "Does a jet aircraft have a critical engine?", "answer": "Why? There is no critical engine for gas turbine engines if the engines are positioned symmetrically with opposing revolution direction. However, aerodynamically, crosswind eﬀect can result as a critical engine eﬀect: a crosswind coming from the same side of the failed engine."}, {"question": "How does the CFM56-7B engine on the 737-800 work?", "answer": "The air races through the fan that acts like a huge propeller accelerating the air which is separated, so only 20% of the air goes into the engine and 80% of the air is bypassed creating huge thrust. (due to its enormous volume, the air only needs to be accelerate through the bypass duct in order to create thrust) This is the bypass ratio and is about 5:1, 20% of the air that enters the engine goes ﬁrst to the low-pressure compressor that compresses the air so the pressure and temperature rises, then it enters the high-pressure compressor that rotates faster causing the pressure and temperature (450 degrees Celsius) to rise even further. (this is in a convergent duct causing the velocity to rise, venturi eﬀect), It then enters a diﬀuser to lower its velocity, then the air is mixed with fuel and then ignited in the combustor (1700 degrees Celsius) increasing the energy level (more pressure = more energy when heated). The hot air then spins the high-pressure turbines that are connected via shaft to the high-pressure compressors, known as the high spool. Then the air passes through the larger low-pressure turbine that powers the low-pressure compressor, the last turbine powers the fan, ﬁnally the combusted air Eﬃciency at which kinetic energy is converted into propulsive force, depends on the amount of energy wasted by the engine It also has automatic protection functions.2 •DAIPISTONALLOSPOSTAMENTOVEROEPROPRIO MgÉ÷% THRUST~&lt;✓&quot;&quot;u☐•,≥{REATERX+[REATERRELATIVESPEED(ITMOUESFORWARD,HELICOPTER)L races down through the exhaust nozzle at the back to be accelerated one more time producing 20% of thrust, the remaining 80% being created by accelerated bypass air. In basic English: A turbine fan is therefore a ﬂow cycle engine, air is compressed then heated by burning fuel, after which it passes through the turbines which drive the compressors and the fan."}, {"question": "What happens to the cold air?", "answer": "It is redirected around the core of the engine and expelled out the back."}, {"question": "Where does N1 come from?", "answer": "Where is the fan? (N1 is the fan speed, N2 is the engine core speed) N1 comes from the front fan speed, its related to thrust more than the engine core as it creates more thrust due to the high bypass."}, {"question": "How is thrust generated?", "answer": "Thrust is generated by the propulsion of air around the engine from the high bypass and the remainder of the air that is combusted in the combustion chamber, that is exhausted out the back through the exhaust."}, {"question": "What is FADEC?", "answer": "(full authority digital electronic control) FADEC electronically monitors and adjusts the engine for proper and smooth operation instead of the pilot manually adjusting the mixture and throttle controls, it gives advantages such as; better fuel eﬃciency, automatic engine protection, care-free engine handling, there is multiple channel computers which provide redundancy if it fails, reduces the number of parameters to be monitored by ﬂight crews and it also helps to start the engines."}, {"question": "Why are jet engines more eﬃcient at high altitude?", "answer": "They work better at high altitude because the air is cooler, cool air expands more when heated than warm air, it is the expansion of the air that drives the combustion engines. Also the air is less dense at altitude therefore the aircraft ﬂies much faster at high altitude than low altitude at the same thrust."}, {"question": "What is compressor stall?", "answer": "A compressor stall occurs when there is an imbalance between the airﬂow supply and the airﬂow demand, in other words, a pressure ratio that is incompatible with the engine RPM, 7•N1-iLowPRESSURECOMPRESSORSSECTION1-LPTURBINE•/2:HPcomp.+HPTURBINE•EPR:TURBI/EDISCHARGEPCOMPRESSORI/LETP •(etVSAtac when this occurs, smooth airﬂow is interrupted and turbulence and pressure ﬂuctuations are created within the turbine. Compressor stalls can be caused by foreign object damage, such as bird-strikes, worn, dirty or contaminated compressor components, in-ﬂight icing, extreme ﬂight maneuvers and improper engine handling."}, {"question": "Diﬀerence between 2-stroke and 4-stroke engine?", "answer": "• A 2-stroke engine completes 1 rotation of the crankshaft after completing one cycle, power is produced once during 2 strokes of the piston, design is simpler, the air-fuel mixture enters through the inlet port and travels to combustion chamber through the crankcase, the 2 stroke engines are lighter, louder and more powerful. (2 stroke engines are designed for high RPM, so it is less durable) •A 4-stroke engine completes 2 rotations of the crankshaft after completing once cycle, power is produced once during 4 strokes of the piston, the design is more complicated, the mixture only goes to the combustion chamber, the 4 stroke engines are heavier, make less noise but less powerful, 4 stroke engines are more fuel eﬃcient because fuel is consumed once every 4 strokes meaning less pollution as well, the 4-stroke engine is more durable too."}, {"question": "Four separate strokes?", "answer": "• Intake – also known as induction or suction, the stroke of the piston begins at the top dead centre and ends at the bottom dead centre, in this stroke the intake valve must be in the open position while the piston pulls an air-fuel mixture into the cylinder by producing vacuum pressure into the cylinder through its downward motion. (the piston is moving down as air is being sucked in by the downward motion of the piston) • Compression – The stroke begins at the bottom dead centre, and ends at the top dead centre, in this stroke the piston compresses the air-fuel mixture in preparation for ignition during the power stroke. (both the intake and exhaust valves are closed during this stage) • Combustion – also known as power or ignition, this is the start of the second revolution of the four-stroke cycle, at this point has completed a full 360-degree revolution. While the piston is at the top dead centre, the compressed air-fuel mixture is ignited by a spark plug (gasoline engine), or by heat generated by high compression (diesel engine), forcefully returning the piston to bottom dead centre, this stroke produces mechanical work from the engine to turn the crankshaft. • Exhaust – also known as outlet, during the exhaust stroke, the piston once again returns from bottom dead centre to top dead centre while the exhaust valve is open, this action expels the spent air-fuel mixture through the exhaust valve. •In a two-stroke engine, the end of the combustion stroke and the beginning of the compression stroke happen simultaneously, with the intake and exhaust functions occurring at the same time."}, {"question": "What is a turbocharger?", "answer": "A turbocharger is a turbine driven forced induction device that increases an engines eﬃciency and power output by forcing extra air into the combustion chamber -Valve Lead: process of opening the inlet valve before TDC —&gt; maximise amount of entering mixture-Valve Overleap: both valves are open at the end of exhaust stroke —&gt; exhaust gases ﬂowing out help to drive more mixture in-Ignition Timing: ignition starts before TDC, otherwise the piston would have already travelled down a bit before combustion —&gt; maximises combustionP)BDOl&#x27;÷.ETD↓P)BDOl+:è Compressor Stall?It’s a partial breakdown of airﬂow through the engine that occurs when there is an imbalance between the air ﬂow supply and the airﬂow demand.Causes: fod; improper engine handling; icing etc…Results: loss of thrust, reverse airﬂow, possible ﬂame on inlet and/or exhaust Compressor Surge?Consequence of compressor stall.The progressive deterioration of the situation will eventually cause a complete breakdown of airﬂow through the engine called a surge. In severe cases this could cause an instantaneous reversal of the gases in the engine, with air being expelled through the engine intake with a loud bang.Hot start:Temperature limitations are exceeded during start, possibly damaging the engine’s hot section. If the condition continues unchecked, a ﬁre may result. Hot starts may be caused by:-improper pilot action (introducing fuel before reaching the proper motoring rpm)-failure of the fuel controller or fuel nozzles-tailwind component (the wind inhibits exhaust ﬂow at the back of the engine)-weak battery causing the electric starter to peter out after light-off.Action: typically is to cut fuel off immediately and leave the starter engaged.(this allows the gases to exit the engine and to cool it)Hung start:A hung start occurs when the engine starts but doesn’t accelerate to idle speed.Hung start may be caused by:-problem wherein the HMU/ECU falls off the acceleration schedule or fails to bring the secondary fuel nozzles onlineAction: cut the fuel off and motor the engine.What is MAP?Manifold pressure is a measure of the absolute pressure of the fuel/air mixture within the intake manifold of the aircraft engine. The intake manifold is a pipe that transports the air/fuel mixture into the cylinder as the piston moves from the top to the bottom of the cylinder during the intake stroke."}, {"question": "How does a jet engine work?", "answer": "-Air is drown trough an intake and enters the compressor (20%, the other is bypassed)-As air cannot go from LP to HP —&gt; Convergent annulus to control the direction of the ﬂow-Before entering the combustion chamber —&gt; diﬀuser to slow the ﬂow-In the combustion chamber air expands and exits ,part of energy is absorbed by turbines to drive compressors- Aft section of the engine is a convergent duct (jet nozzle) to increase speed even more"}, {"question": "How does a turbocharger work?", "answer": "(feeding more air, allows the engine to burn more fuel meaning more power) • It all starts at the turbine, which is driven by exhaust gases exiting the engine, as exhaust exits through the exhaust manifold, it passes over the turbine and spins it, the more exhaust gases that pass through, the faster the turbine spins. • A shaft connects the turbine and the compressor, so when the turbine starts spinning as the engine is started, the compressor starts spinning too. • The compressor is in charge of drawing air from the outside of the aircraft, compressing it and then putting it on the engine."}, {"question": "• Turbochargers are good at increasing the air pressure in the engines intake manifold (manifold pressure), how do turbochargers prevent too much air from entering the engine?", "answer": "(risk of damage/destroying the engine) •Waste gates open and close to regulate the amount of air that passes over the turbine and prevent the turbine from spinning too fast"}, {"question": "Advantages of a turbocharger?", "answer": "• Better at high altitudes • Better power to weight ratio • Can deliver sea level power at altitude • Compared to the supercharger, it is more eﬃcient, uses less fuel and have less weight"}, {"question": "How does a supercharger work?", "answer": "The supercharger works on the same principle as a turbocharger, the only diﬀerence being is that it is mechanically driven by a direct connection to the engine (crankshaft) whereas a turbocharger is driven by a turbo using exhaust gases."}, {"question": "Advantages of a supercharger?", "answer": "• Relatively cheaper than turbochargers • They run at cooler temperatures •Superchargers don’t have any lag; the power is immediate. Mixture Mixture is the air/fuel ratio. Sets the amount of fuel added to the intake airﬂow. At higher altitudes, the air pressure (and therefore the oxygen level) declines so the fuel volume must also be reduced to give the correct air/fuel mixture. This process is known as &quot;leaning&quot;."}, {"question": "AIRFRAME What is ﬂy-by-wire?", "answer": "Flight control systems that use computers to process the ﬂight control inputs made by the pilot or autopilot and send corresponding signals to the ﬂight control surface actuators. (replaces mechanical inputs, and pilot does not directly control the surfaces)"}, {"question": "How does Anti-Skid work?", "answer": "The anti-skid system compares the speed of the aircraft with the rotational speed of each main wheel, if the speed of any wheel is too slow, the brakes are released to allow the wheel to speed up and prevent skidding. The system is fully automatic. ……….. MASS AND BALANCE Explain mass and balance and the relation of centre of gravity The mass of an aircraft and the location of its centre of gravity is vital information required before commencement of any ﬂight. Knowing the actual aircraft empty weight and position of its centre of gravity, the passenger and freight load and the planned fuel load, the maximum weight of the aircraft and its centre of gravity can be calculated for any phase of the ﬂight. The aircraft mass and its centre of gravity must remain at all times within the limits speciﬁed in the AFM for the relevant stage of ﬂight. Beneﬁts:-weight saving: eliminates all mechanical components (pulleys,cranks,cables,etc…)-self protection functions: limits pilots controls to assure safety -1/0ORLA/DirkALCOWEDORNOT??"}, {"question": "AIRFRAMETypes of wings?", "answer": "-Cantilever wing: NO external struts or bracing—&gt; wing is supported by itself-Non Cantilever: YES external struts"}, {"question": "Types of Fuselages?", "answer": "-Truss: skeleton —&gt; longerons with diagonal bracing -Monocoque: skin takes alone all the loads -Semimonocoque: has also stringers ◦raveBox &gt;USEDByPRESSURIZEDa/C"}, {"question": "What is PTU?", "answer": "-It’s the power transfer unit that allows the hydraulic pressure of one hydraulic system to drive a pump to pressurize a second hydraulic system without any transfer of hydraulic ﬂuid.-Used in case of failure of one hydraulic system, no during normal operations.What is RAT?-It’s the ram air turbine-Made of windmilling blades that are used to drive an hydraulic pump.-Used for ﬂight controls ONLYFlight controls?-B737: -normal operation: yoke—&gt; cables—&gt; pcu—&gt; ﬂight controls-emergency: yoke—&gt; cables—&gt; ﬂight controls-A320:-normal operation: sidestick—&gt; wires—&gt; computer—&gt; pcu—&gt; ﬂight controls -emergency: the same, hydraulic power is supplied by RAT-APU: in case of 2 eng failure apu can supply power to the electrical hydraulic pumps, and you can try to restart the engine (apu on only below a certain altitude)Landin gear-2 types: -tricycle -tail wheel -types of struts:Cantilever ForkHalf fork Dual wheels &gt;o&gt;↓&gt;⑨&gt;0O0¥&gt;BOGEYo Braking technique?-Steel brake (p2008,etc..): multiple small and light brake application -Carbon brake (b737,etc…): one ﬁrm applicationAre fuel tanks pressurized?Yes, they are in order to prevent vapour locking: pumps are designed to pump liquid fuel,not vapour that wouldn’t be able to be suckedIs fuel hated?It’s heated just before just before passing the ﬁlters of the LP fuel pumps to prevent fuel to form wax like particles and ice crystals.JETA1 freezing T°: -47°CFuel system B737?Each fuel tank uses two AC powered fuel pumps which are cooled and lubricated by fuel passing through the pump. Center tank pumps produce higher pressure than main tank pumps. This ensures that center tank fuel is used before main tank fuel.When main tank fuel pump pressure is low, each engine can draw fuel from its corresponding main tank through a suction feed line that bypasses the pumps.Detonation vs Pre-Ignition?Detonation:During detonation, the fuel/air charge explodes rather than burning smoothly. Occurs near or after top dead center.May be caused by: -low octane fuel -weak mixtures give high temp mixture and combustion,thus can create detonation -carb hot air: increases t in the engine and thus risk of detonation. Do not use carb heat above at power settings greater than 80%, use only for short time.Recognized by: -low egt; high cht-rough engine soundMixture explodes in un uncontrolled manner..&gt;WINGS"}, {"question": "Pre-ignition:Ignition of mixture when the piston is still in compression phase.May be caused by: - hot carbon depositsRecognized by: -high egt; high cht-rough engine sound Take Oﬀ conﬁg warning, what is it and what systems does it comprehend?", "answer": "It’s a system that alerts pilots that something in the conﬁguration is wrong for take oﬀ, and that taking oﬀ could be dangerous.It comprehends: -Position of High Lift Devices such as ﬂaps and slats-Elevator trim position o trimable horizontal stabiliser position as appropriate-Position of autobrake-Position of ground spoilers or speedbrakes-Engagement of parking brakes What can cause vibration in the engine?An imbalance is the more likely one,such as the fan section blade separating.Jet engines operate at a very high RPM, something like 14,000 RPM! So even the smallest imperfection in the engine blades can cause a vibration to occur.What&#x27;s an IDGIs the main source of A.C. (alternating current) electrical power on the aircraft; it is a combination of a constant speed drive and an electrical generator driven by the engine through the accessory gearbox."}, {"question": "All the Weights?", "answer": ""}, {"question": "Mass of people?", "answer": "- 30 seats or more: -adults 84kg -children (2-12 years) 35kg-Flight crew: - 85kg including hand baggage-Cabin crew: - 75kg including hand baggage What is load sheet?A document which records the weight and CG settings for a commercial ﬂight.2 copies: - the original —&gt; left on ground - the copy —&gt; given to the captainRegulated T/O weight?-Max weight subject to airport and performance requirements -RTOW&lt;MTOW"}, {"question": "What is a load sheet and why does the captain ﬁll it?", "answer": "It is ﬁlled to control that loads and mass doesn’t exceed structural and performance limits of the aircraft."}, {"question": "What is centre of gravity?", "answer": "The centre of gravity is the point through which the total weight of a body will act."}, {"question": "How do you calculate fuel for the ﬂight?", "answer": "• Taxi Fuel • Trip Fuel (SID and STAR) • Contingency (5% of trip fuel) • Alternate fuel • Final reserve fuel (30 minutes holding at 1500ft) (45-minute reciprocating engines) •Extra"}, {"question": "METEO What is a jet stream?", "answer": "A jetstream is a strong and narrow current in the upper tropopause or stratosphere characterized by strong vertical and/or lateral windshear (CAT). The wind speed must be (up to 300) for a wind to be classiﬁed as a jetstream. Jetstreams are Epically . They are Epical in the polar front (about 60° of laEtude) and in the intertropical front. The core of the jet is Epically in the lower part towards the subtropical air. The greater CAT is Epically found towards the polar air in the upper part of the jetstream."}, {"question": "How are thunderstorms formed?", "answer": "Thunderstorms are normally associated with cumulonimbus clouds. These clouds are formed with 4 conditions: -High moisture content in the air -A trigging lifting action to cause a parcel of air rising (convection, turbulence, frontal, orographic) TTCAFE -Adiabatic cooling of the air -High instability (once the air starts to rise it will continue rising), ELR must be greater than SALR During the development of the CB updrafts move air aloft, allowing condensation to take place throughout the ascent of the convective currents. During the mature stage, water drops start to fall through the cloud, but stronger upwards current will increase the cloud: updrafts (5-60008/min) in this stage are stronger than downdrafts (30008/min). This is the most hazardous phase of thunderstorms, where we can ﬁnd hail, torrential rain, severe turbolence, severe icing, windshear, microbursts and lightning. Decaying stage is the ﬁnal stage of the thunderstorm. In this phase there is an end of continuous rain and the start of sporadic showers. At higher levels it may take on the anvil shape as upper winds spread out under the tropopause. An anvil must be avoided because of the presence of strong downward vertical currents beneath it. A thunderstorm can produce several hazards for aircrafts: severe windshear, turbulence, icing, hail, reduced visibility, lightning strikes and radio comms and navs interference. CBs must be avoided by a minimum of 10NM and, in severe conditions, by at least 20NM."}, {"question": "What is radiation fog?", "answer": "Radiation fog occurs inland, especially in valleys and low-lying areas. This requires the following conditions: -Cloudless night, this allows the earth’s surface to lose heat by radiation, and causes water vapour to condense out in liquid form. -Moist air, with a high relative humidity, which only requires a slight cooling to reach its dewpoint temperature. -Light winds, between 2 and 8 kts."}, {"question": "What is advection fog?", "answer": "The term advection means heat transfer by the horizontal movement of the air. Fog formed in this manner is called advection fog and can occur day or night, land or sea, if the following conditions exits: -Warm, moist air mass ﬂowing across a colder surface, which is cooled from below. -Light to moderate winds, that encourages the mixing of the lower levels to give a layer of fog. -Sea fog, very cold air passes over a warmer sea that causes evaporating moisture to condense out into whispers of vapor. •&gt;2hFORALLSTAGES•MOVINGATTHE10000ftWIND•LICHT/I/CMORELIKELYBETWEEN-10ºand-110°C"}, {"question": "What is a warm front?", "answer": "A warm front is the boundary produced between two air masses, where the warmer, less dense air mass rises up and replace at alEtude the colder air mass at the surface. In a warm front, the frontal air at alEtude is actually well ahead of its depicted position on a weather chart. On the weather charts warm front is represented by half circles along the front line. As the warm front approaches: lowering of the cloud base. Clouds change from cirrus to cirrostratus to altostratus with possible change into nimbostratus with rainfall. Poor visibility, due to the increase in low-level clouds and rain. Atmospheric pressure fall. As the warm front passes: rise in temperature, due to the arrival of the warm sector air mass. Low level cloud base or fog. Wind veers direction in the northern hemisphere and backs in the southern. Atmospheric pressure stop falling and rises. Good visibility in general."}, {"question": "What is a cold front?", "answer": "A cold front is a boundary between two air masses, where the colder, denser air mass undercuts and replaces the warmer preceding air mass from the surface upward. On weather charts cold front is represented by barbs along the front line. As the cold front approaches: cumulus and cumulonimbus is experienced, so we can ﬁnd heavy rain, thunderstorm, turbulence and wind shear. Poor visibility due to the increase in heavy clouds through a large vertical band and heavy rain. The atmospheric pressure will fall. As the cold front passes: drop in air temperature, due to the arrival of the cold sector. Clear skies, good visibility, wind veers in direction in the northern hemisphere and backs in the southern hemisphere. Atmospheric pressure will stop falling and start rising. Describe ICE Icing conditions exist below 10°C with visible moisture (clouds, fog with visibility of one statute mile (1600m) or less, rain, snow, sleet, ice crystals, and so on) is present in the air or ice, snow, slush or standing water is present on the ramps, taxiways or runways. There are several types of ice, but the most common are: clear ice, rime ice or hoar frost. Clear ice is a very serious form of icing, heavy and diﬃcult to remove. It forms when supercooled droplets impact with an air frame. The water ﬂow over the frame releasing latent heat before freezing. It’s normally found in CBs and nimbostratus, where you can ﬁnd large droplets (moderate or severe). Rime ice is formed by smaller droplets which tends to freeze instantly. It is a granular coating which is normally easy to remove. Can occur in any cloud with small water droplets or freezing fog (light to moderate). Hoar frost occurs when air is cooled to the temperature at which saturation occurs and the airframe is below 0°C. It is formed by sublimation: water vapour turns directly to ice without passing through the liquid state. It can occur on ground or a8er takeoﬀ. Problems related with ice are: - Adverse aerodynamic performance eﬀects reducing stalling angle and maximum li8 capability, and thus increasing stall speed and drag. Dimensions??? - Control surfaces may be freezed. - Increase in aircraft weight. - Reduced engine power (jet intake or carburettor can restrict the air ﬂow into the engine). - Vent blockage eﬀects (pitot and static ports). -Degraded navigation and radio communication eﬀects if ice builds up in aerials."}, {"question": "What is a Jetstream?", "answer": "Jetstream’s are strong, generally westerly winds concentrated in a relatively narrow and shallow steam in the upper troposphere of the earth. A jet stream is formed as a result of temperature gradients. (thermal gradients)"}, {"question": "Where is a Jetstream found and how high?", "answer": "• Subtropical Jetstream – (west-east) Usually found around 30 degrees of latitude, normally found between 33,000ft to 52,000ft. • Polar front Jetstream – (west-east) Usually found around 60 degrees of latitude, normally found between 30,000ft to 39,000ft. (this is the strongest, especially when it is over land in the winter) •Usually Jetstream’s are 1500nm long, 200nm wide, and 12000ft deep."}, {"question": "How strong does the wind have to be to be considered a jet stream?", "answer": "To be classiﬁed as a jet stream, the minimum is 60kts. Why westerly? Jetstream’s are westerly due to the Coriolis eﬀect (caused by the earths rotation, deﬂects wind to the right in the northern hemisphere, and to the left in the southern hemisphere)"}, {"question": "What is clear air turbulence?", "answer": "Clear air turbulence is deﬁned as sudden severe turbulence occurring in cloudless regions that causes violent buﬀeting of the aircraft. Any CAT is strongest on the cold side of the jet stream where the wind shear is greatest, CAT can be encountered 7000ft below to about 3000ft above the tropopause."}];
+    // Attach deterministic IDs
+    const QA = ALL_QA.map((qa, idx) => ({ id: `q_${idx}`, ...qa }));
+
+    // ==== State ====
+    const state = {
+      mode: 'all', // 'all' | 'hard'
+      deck: [],
+      index: 0,
+      total: QA.length,
+      flipped: false,
+    };
+
+    // ==== DOM ====
+    const els = {
+      flashcard: document.getElementById('flashcard'),
+      q: document.getElementById('question-text'),
+      a: document.getElementById('answer-text'),
+      know: document.getElementById('know-btn'),
+      dont: document.getElementById('dont-know-btn'),
+      current: document.getElementById('current-card'),
+      total: document.getElementById('total-cards'),
+      remaining: document.getElementById('remaining-cards'),
+      progressBar: document.getElementById('progress-bar'),
+      completion: document.getElementById('completion-screen'),
+      quiz: document.getElementById('quiz-content'),
+      restart: document.getElementById('restart-btn'),
+      restart2: document.getElementById('restart2-btn'),
+      starBtn: document.getElementById('star-btn'),
+      starIcon: document.getElementById('star-icon'),
+      toggleMode: document.getElementById('toggle-mode'),
+      modeIndicator: document.getElementById('mode-indicator'),
+      favCount: document.getElementById('fav-count'),
+      emptyState: document.getElementById('empty-state')
+    };
+
+    function persistLocal() {
+      try {
+        const data = { mode: state.mode, index: state.index };
+        localStorage.setItem('quizState', JSON.stringify(data));
+      } catch (e) {}
+    }
+    function restoreLocal() {
+      try {
+        const data = JSON.parse(localStorage.getItem('quizState')||'null');
+        if (data) { state.mode = data.mode || 'all'; state.index = data.index||0; }
+      } catch (e) {}
     }
 
-    // Sidebar categories
-    renderCatList();
-    renderContent();
-    // Quiz category dropdown
-    const optAll = document.createElement('option');
-    optAll.value='__ALL__';
-    optAll.textContent='Tutte le categorie';
-    quizCategoryEl.appendChild(optAll);
+    function buildDeck() {
+      if (state.mode === 'hard') {
+        const starredIds = new Set(Object.keys(starred));
+        state.deck = QA.filter(q => starredIds.has(q.id));
+      } else {
+        state.deck = [...QA];
+      }
+      if (state.mode === 'hard' && state.deck.length === 0) {
+        els.quiz.style.display = 'block';
+        els.completion.style.display = 'none';
+        els.emptyState.style.display = 'block';
+      } else {
+        els.emptyState.style.display = 'none';
+      }
+      state.index = Math.min(state.index, Math.max(0, state.deck.length - 1));
+      updateHeader();
+      showCard();
+    }
 
-    // Aggiungi l'opzione "Difficili" nel menu a tendina del quiz
-    const optDifficult = document.createElement('option');
-    optDifficult.value = 'Difficili';
-    optDifficult.textContent = 'Domande difficili';
-    quizCategoryEl.appendChild(optDifficult);
+    function updateHeader() {
+      els.total.textContent = state.deck.length;
+      els.modeIndicator.textContent = 'Modalità: ' + (state.mode === 'hard' ? 'Domande difficili' : 'Tutte');
+      const count = Object.keys(starred).length;
+      els.favCount.textContent = '⭐ ' + count;
+    }
 
-    Object.keys(DATA).forEach(cat=>{
-      const o=document.createElement('option'); o.value=cat; o.textContent=cat; quizCategoryEl.appendChild(o);
-    });
-    
-    // Rendi la funzione toggleDifficult globale e gestisci l'evento
-    window.toggleDifficult = toggleDifficult;
+    function showCard() {
+      if (state.deck.length === 0) {
+        els.current.textContent = 0;
+        els.remaining.textContent = 0;
+        els.progressBar.style.width = '0%';
+        els.quiz.style.display = 'block';
+        els.completion.style.display = 'none';
+        els.q.innerHTML = '';
+        els.a.innerHTML = '';
+        setStarUI(false);
+        return;
+      }
+      const item = state.deck[state.index];
+      els.q.innerHTML = item.question;
+      els.a.innerHTML = item.answer;
+      state.flipped = false;
+      els.flashcard.classList.remove('flipped');
+      els.current.textContent = state.index + 1;
+      els.remaining.textContent = state.deck.length - (state.index + 1);
+      els.progressBar.style.width = (((state.index) / Math.max(1, state.deck.length)) * 100) + '%';
+      setStarUI(Boolean(starred[item.id]));
+      persistLocal();
+    }
 
-    // Remove inline onclick from HTML and add a proper event listener to the quiz flag icon.
-    // FIX: Add an event listener to handle the click and pass the correctly encoded question.
-    quizFlagIcon.addEventListener('click', () => {
-        if (isQuizMode && index >= 0 && index < deck.length) {
-            const questionToToggle = deck[index];
-            const encodedQuestion = btoa(encodeURIComponent(questionToToggle));
-            toggleDifficult(encodedQuestion);
+    function flipCard() {
+      state.flipped = !state.flipped;
+      els.flashcard.classList.toggle('flipped');
+    }
+
+    function markKnown() {
+      if (state.deck.length === 0) return;
+      state.deck.splice(state.index, 1);
+      if (state.index >= state.deck.length) state.index = 0;
+      if (state.deck.length === 0) {
+        showCompletion();
+      } else {
+        showCard();
+      }
+    }
+
+    function markUnknown() {
+      if (state.deck.length === 0) return;
+      state.index = (state.index + 1) % state.deck.length;
+      showCard();
+    }
+
+    function showCompletion() {
+      els.quiz.style.display = 'none';
+      els.completion.style.display = 'block';
+    }
+
+    function restart() {
+      state.index = 0;
+      buildDeck();
+      els.quiz.style.display = 'block';
+      els.completion.style.display = 'none';
+    }
+
+    function setStarUI(active) {
+      els.starIcon.textContent = active ? '★' : '☆';
+      els.starIcon.classList.toggle('active', active);
+    }
+
+    async function toggleStar() {
+      if (state.deck.length === 0) return;
+      const qid = state.deck[state.index].id;
+      const currently = Boolean(starred[qid]);
+      setStarUI(!currently);
+      try {
+        if (currently) {
+          await remove(starRef(qid));
+          delete starred[qid];
+        } else {
+          await set(starRef(qid), true);
+          starred[qid] = true;
         }
-    });
-  });
-}
-init();
+      } catch (e) {
+        console.warn('Firebase set/remove failed, reverting', e);
+        setStarUI(currently);
+      }
+      updateHeader();
+    }
 
-</script>
+    function toggleMode() {
+      state.mode = (state.mode === 'all') ? 'hard' : 'all';
+      document.getElementById('toggle-mode').classList.toggle('active', state.mode==='hard');
+      buildDeck();
+    }
+
+    // ==== Events ====
+    els.flashcard.addEventListener('click', flipCard);
+    els.flashcard.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+      if (e.key.toLowerCase() === 'k') { markKnown(); }
+      if (e.key.toLowerCase() === 'j') { markUnknown(); }
+      if (e.key === '*') { toggleStar(); }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'k') { markKnown(); }
+      if (e.key.toLowerCase() === 'j') { markUnknown(); }
+      if (e.key === ' ' && document.activeElement !== els.flashcard) { e.preventDefault(); flipCard(); }
+      if (e.key === '*') { toggleStar(); }
+    });
+    els.know.addEventListener('click', markKnown);
+    els.dont.addEventListener('click', markUnknown);
+    els.restart.addEventListener('click', restart);
+    if (els.restart2) els.restart2.addEventListener('click', restart);
+    els.starBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleStar(); });
+    els.toggleMode.addEventListener('click', toggleMode);
+
+    // ==== Init ====
+    restoreLocal();
+    buildDeck();
+  </script>
 </body>
 </html>
