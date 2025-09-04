@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ryanair Technical Questions — Study App</title>
+<style>
+  :root{--bg:#0f172a;--panel:#111827;--muted:#1f2937;--text:#e5e7eb;--accent:#38bdf8;--accent2:#a78bfa}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Ubuntu,'Helvetica Neue',Arial,sans-serif;background:linear-gradient(180deg,#0b1220,#0f172a);color:var(--text);min-height:100vh}
+  header{position:sticky;top:0;z-index:10;background:rgba(17,24,39,.8);backdrop-filter:blur(8px);border-bottom:1px solid #263043}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  h1{margin:0;font-weight:700;font-size:22px;letter-spacing:.2px}
+  main{max-width:1100px;margin:16px auto;display:grid;grid-template-columns:280px 1fr;gap:16px;padding:0 16px}
+  @media (max-width:900px){main{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid #263043;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,.25)}
+  .sidebar{padding:12px}
+  .tabbar{display:flex;gap:8px;margin:12px}
+  .tabbar button{flex:1;padding:10px 12px;border-radius:12px;border:1px solid #263043;background:#0b1326;color:#cbd5e1;cursor:pointer}
+  .tabbar button.active{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;color:#0b1220;font-weight:700}
+  .search{display:flex;gap:8px;margin:8px 0}
+  .search input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid #2b3650;background:#0b1326;color:var(--text)}
+  .cat-list{display:grid;gap:6px;max-height:60vh;overflow:auto;padding-right:4px}
+  .cat{padding:10px 12px;border-radius:10px;border:1px solid #263043;background:#0b1326;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+  .cat.active{outline:2px solid var(--accent);background:#0e1a34}
+  .content{padding:16px}
+  .content h2{margin:6px 0 12px}
+  .meta{font-size:12px;opacity:.8;margin-bottom:12px}
+  ol{padding-left:20px}
+  li{margin:6px 0; display: flex; align-items: center; justify-content: space-between;}
+  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#0b1326;border:1px solid #263043;font-size:12px}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+  .btn{padding:10px 12px;border-radius:10px;border:1px solid #263043;background:#0b1326;color:var(--text);cursor:pointer}
+  .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;color:#0b1220;font-weight:700}
+  .row{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+  @media (max-width:700px){.row{grid-template-columns:1fr}}
+  select{padding:10px 12px;border-radius:10px;border:1px solid #2b3650;background:#0b1326;color:var(--text)}
+  .question-box{border:1px dashed #2b3650;border-radius:14px;padding:18px;font-size:18px;line-height:1.45;min-height:72px;background:#0b1326}
+  .progress{height:8px;background:#0b1326;border:1px solid #263043;border-radius:999px;overflow:hidden}
+  .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  footer{max-width:1100px;margin:24px auto 48px;opacity:.7;padding:0 16px}
+  
+  /* Quiz Mode Layout */
+  .quiz-mode main{
+    grid-template-columns: 1fr;
+    max-width: 800px;
+    justify-items: center;
+  }
+  .quiz-mode .sidebar{
+    width: 100%;
+    max-width: 600px;
+  }
+  .quiz-mode .content{
+    display: none;
+  }
+  .quiz-card{
+    background: var(--panel);
+    border: 1px solid #263043;
+    border-radius: 20px;
+    padding: 32px;
+    margin: 20px 0;
+    text-align: center;
+    font-size: 20px;
+    line-height: 1.6;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 15px 35px rgba(0,0,0,.3);
+    transition: all 0.3s ease;
+    flex-direction: column;
+  }
+  .quiz-card:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(0,0,0,.4);
+  }
+
+  /* Styling for the flag icon */
+  .flag-icon {
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 8px;
+    opacity: 0.3;
+    transition: opacity 0.2s ease, color 0.2s ease;
+  }
+
+  .flag-icon.flagged {
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  li:hover .flag-icon {
+    opacity: 1;
+  }
+
+  /* Quiz question container styling */
+  .quiz-question-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+  }
+
+  .quiz-question-text {
+      flex: 1;
+      text-align: center;
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Ryanair Technical Questions — Study App</h1>
+  </div>
+</header>
+<main>
+  <aside class="card sidebar">
+    <div class="tabbar">
+      <button id="tab-browse" class="active">Sfoglia</button>
+      <button id="tab-quiz">Quiz</button>
+    </div>
+    <div id="browse-panel">
+      <div class="search">
+        <input id="search" type="search" placeholder="Cerca domanda… (filtra nella categoria)"/>
+      </div>
+      <div class="cat-list" id="cat-list"></div>
+    </div>
+    <div id="quiz-panel" style="display:none">
+      <div class="row">
+        <label>
+          <div class="pill" style="margin-bottom:6px">Categoria</div>
+          <select id="quiz-category"></select>
+        </label>
+        <label>
+          <div class="pill" style="margin-bottom:6px">Ordina in modo casuale</div>
+          <select id="shuffle-mode">
+            <option value="true">Sì (consigliato)</option>
+            <option value="false">No (in ordine)</option>
+          </select>
+        </label>
+      </div>
+      <div class="controls">
+        <button class="btn primary" id="start-quiz">Avvia/Reset quiz</button>
+        <button class="btn" id="next">Avanti ▶</button>
+        <button class="btn" id="prev">◀ Indietro</button>
+        <button class="btn" id="skip">Salta</button>
+        <button class="btn" id="restart">Ricomincia</button>
+      </div>
+      <div class="meta"><span id="counter">0 / 0</span> • <span id="status">Inattivo</span></div>
+      <div class="quiz-card" id="question-card" style="display:none">
+        <div id="quiz-question-container" class="quiz-question-container">
+          <span id="question-text" class="quiz-question-text">Premi "Avvia/Reset quiz" per iniziare.</span>
+          <span id="quiz-flag-icon" class="flag-icon">⭐</span>
+        </div>
+      </div>
+      <div class="question-box" id="question-box">Premi "Avvia/Reset quiz" per iniziare.</div>
+      <div class="progress" style="margin-top:10px"><div class="bar" id="bar"></div></div>
+    </div>
+  </aside>
+  <section class="card content">
+    <div id="content"></div>
+  </section>
+</main>
+<footer>
+  <small>Single‑file app. Le domande sono incluse localmente; nessun dato esce dal tuo dispositivo.</small>
+</footer>
+<script type="module">
+// ===== FIREBASE SETUP =====
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, deleteDoc, collection, query, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+let userId = null;
+let difficultQuestionsCollection;
+
+// ===== Dataset: DOMANDE TECNICHE FILTRATE =====
+const DATA = {
+  "B737-800 / 8200": [
+    "How many seats are on a 737-800?",
+    "What type of engines are on a 737-800?",
+    "How many flight attendants are there on a 737-800?",
+    "Pressurisation of the cabin in cruise on a 737-800?",
+    "What is the optimum cruising altitude on a 737-800?",
+    "What are winglets and what advantages do they give on a 737-800?",
+    "What is the fuel capacity of a 737-800?",
+    "What is the range of a 737-800?",
+    "What is the FMA? Where is it location? Explain the modes?",
+    "Icing protection and systems on a 737-800?",
+    "Can the 737-800 fly in icing conditions?",
+    "Emergency exits available to pilots?",
+    "Max Mach number on a 737-800?",
+    "What is the cruise speed of a 737-800?",
+    "What is VNE and what limits it?",
+    "Max ceiling of a 737-800?",
+    "MTOW of a 737-800?",
+    "How many exits on a 737-800?",
+    "Which direction do the fan blades rotate on a 737-800?",
+    "What is the ratio? (bypass ratio)",
+    "B737 winglets?",
+    "What is cost index?",
+    "What is optimum altitude?",
+    "Does the 737-800 have a critical engine?",
+    "How does the CFM56-7B engine on the 737-800 work?",
+    "Differences between the 737-800 and the MAX?",
+    "Electrical system of a 737-800?",
+    "What is the sweep angle of a 737-800, why this value and not another?",
+    "Rejected take-off procedure on MCC?",
+    "Hydraulic pressure for 737-800?",
+    "How are control surfaces operated on a 737-800?",
+    "How many hydraulic systems does the 737-800 have? What do they operate?",
+    "What leading edge devices are on a 737-800?",
+    "What trailing edge devices are on a 737-800?",
+    "What do you know about 737-800?",
+    "How is the landing gear operated in a 737 NG?",
+    "What is wingspan on Boeing 737-800?",
+    "How much voltage does the engine produce? And how much hertz?",
+    "What is the Hertz when the engine doesn't rotate fast?",
+    "What is the G limit of the 737-800?",
+    "What kind of elevator system the 737 has?",
+    "Does the engine on the 737 rotate in the same direction?",
+    "What navigation systems are on a 737-800?",
+    "737-800 V 737 MAX – Facts, differences, performance?",
+    "Differences between 737 and A320?",
+    "737-8200 Engine. How does it work?",
+    "Is it worth Ryanair buying the 210 MAX?",
+    "Why will the new B737 game changer be good for the company?",
+    "737 controls vs Fly by wire?"
+  ],
+  "Principles of Flight / Aerodinamica": [
+    "What is Mcrit?",
+    "What is Mach Tuck?",
+    "What is Mach Trimmer?",
+    "Why does some aircraft have winglets?",
+    "Wing tip vortices?",
+    "Sweep angle?",
+    "Swept wing vs straight wing?",
+    "High lift devices?",
+    "Spoilers?",
+    "Use of spoilers during roll?",
+    "Advantages/disadvantages of high tails?",
+    "Critical engine?",
+    "Describe the hydraulics system?",
+    "Yaw Damper?",
+    "MCAS?",
+    "Trim runaway. What do you do?"
+  ],
+  "Performance / Operations": [
+    "Name the V speeds in order they come?",
+    "What is screen height?",
+    "What is V1?",
+    "What is V2?",
+    "What is VMCA?",
+    "What is VMCG?",
+    "Definitions of TORA, clearway, TODA, stopway, ASDA?",
+    "What is RVSM airspace?",
+    "Semicircular levels?",
+    "What are the lights on the runway?",
+    "Approach lighting?",
+    "Runway markings?",
+    "VFR weather minimums?",
+    "Non precision approaches?",
+    "What are the three types of instrument approaches?",
+    "What is DA?",
+    "What's the difference between DA and MDA?",
+    "Precision approach CAT?",
+    "Minimums for the Alternate?",
+    "What is MSA?",
+    "What is MEA?",
+    "What is MORA?",
+    "What is MOCA?",
+    "What is MAA?",
+    "What is MHA?"
+  ],
+  "Navigation / Instruments": [
+    "What is an NDB?",
+    "What are the errors of an NDB?",
+    "What are the NDB/ADF errors?",
+    "What happens with the airspeed indicator if the pitot probe is blocked during climb?",
+    "… and during descent?",
+    "What happens if pitot tube is blocked?",
+    "What happens if static port is blocked?",
+    "What is the difference between IAS and TAS?",
+    "What is LSS at sea level with +15 °C?",
+    "Standard ISA conditions?",
+    "One millibar in feet?",
+    "What is an INS/IRS?",
+    "Advantages of an INS/IRS?",
+    "What is an FMS and FMC?",
+    "What's an INS? What are the differences with a GPS?"
+  ],
+  "Systems / Powerplant": [
+    "Fuel system B737?",
+    "Detonation vs Pre-Ignition?",
+    "Take Off config warning?",
+    "What can cause vibration in the engine?",
+    "What's an IDG?",
+    "All the Weights?",
+    "Mass of people?",
+    "What is a load sheet?",
+    "Why does the captain fill it?",
+    "What is centre of gravity?",
+    "How do you calculate fuel for the flight?",
+    "How does load factor affect the aileron effectiveness?",
+    "Stability, controllability, manoeuvrability?",
+    "What is adverse yaw?",
+    "Forces on a plane?",
+    "What is electricity? DC? AC?",
+    "Advantages of AC over DC?",
+    "Alternator?",
+    "Electrical system of a 737-800?",
+    "How does Anti-Skid work?",
+    "What is PTU?",
+    "What is RAT?",
+    "Flight controls?"
+  ],
+  "Meteo": [
+    "Warm fronts?",
+    "Cold fronts?",
+    "Fog?",
+    "Thunderstorms?",
+    "Weather radar?",
+    "Referring to ND picture with a cell – would you fly through it?",
+    "If you don't have weather radar what are other signs of bad weather?",
+    "Wind 180/20kt; Runway 27 or 09?",
+    "What is the turbulent layer?",
+    "Thermal inversion and associated weather?",
+    "Crosswind component @ runway 27 with 310/7kt?",
+    "Jetstreams and associated weather?"
+  ],
+  "Flight Planning / Communications": [
+    "At what point in the go around does the alternate fuel begin for planning purposes?",
+    "Describe the components that make up the block fuel?",
+    "In case of a loss in communications, what is your decision making process?"
+  ]
+};
+
+// Data for difficult questions stored locally
+const DIFFICULT_QUESTIONS = {};
+
+// ===== UI State =====
+const contentEl = document.getElementById('content');
+const catListEl = document.getElementById('cat-list');
+const searchEl = document.getElementById('search');
+const quizCategoryEl = document.getElementById('quiz-category');
+const shuffleModeEl = document.getElementById('shuffle-mode');
+const questionBox = document.getElementById('question-box');
+const questionCard = document.getElementById('question-card');
+const questionText = document.getElementById('question-text');
+const quizFlagIcon = document.getElementById('quiz-flag-icon');
+const counterEl = document.getElementById('counter');
+const statusEl = document.getElementById('status');
+const barEl = document.getElementById('bar');
+
+let currentCategory = Object.keys(DATA)[0];
+let filtered = '';
+let isQuizMode = false;
+
+// ===== Render Category List =====
+function renderCatList(){
+  catListEl.innerHTML = '';
+
+  // Add "Domande difficili" category first
+  const difficultQuestionsArray = Object.values(DIFFICULT_QUESTIONS);
+  const difficultCatButton = document.createElement('button');
+  difficultCatButton.className = 'cat' + (currentCategory === 'Difficili' ? ' active' : '');
+  difficultCatButton.innerHTML = `<span>Domande difficili</span><span class="pill">${difficultQuestionsArray.length}</span>`;
+  difficultCatButton.onclick = () => { currentCategory = 'Difficili'; renderCatList(); renderContent(); };
+  catListEl.appendChild(difficultCatButton);
+
+  // Add the rest of the categories
+  Object.entries(DATA).forEach(([cat, arr]) => {
+    const b = document.createElement('button');
+    b.className = 'cat' + (cat===currentCategory?' active':'');
+    b.innerHTML = `<span>${cat}</span><span class="pill">${arr.length}</span>`;
+    b.onclick = () => { currentCategory = cat; renderCatList(); renderContent(); };
+    catListEl.appendChild(b);
+  });
+}
+
+// ===== Render Content (Browse) =====
+function renderContent(){
+  let all = [];
+  if (currentCategory === 'Difficili') {
+      all = Object.values(DIFFICULT_QUESTIONS);
+  } else {
+      all = DATA[currentCategory] || [];
+  }
+
+  const q = filtered.toLowerCase();
+  const shown = q ? all.filter(x => x.toLowerCase().includes(q)) : all;
+
+  // Generate HTML for each question, including the flag icon
+  // FIX: Use encodeURIComponent to handle special characters before btoa, to avoid InvalidCharacterError
+  const questionsHtml = shown.map(x=> {
+      const isDifficult = !!DIFFICULT_QUESTIONS[x];
+      const flagClass = isDifficult ? 'flagged' : '';
+      const encodedQuestion = btoa(encodeURIComponent(x));
+      const flagIcon = `<span class="flag-icon ${flagClass}" onclick="toggleDifficult('${encodedQuestion}')">⭐</span>`;
+      return `<li><span>${x}</span> ${flagIcon}</li>`;
+  }).join('');
+
+  contentEl.innerHTML = `
+    <h2>${currentCategory}</h2>
+    <div class="meta">${shown.length} domande mostrate <span class="pill" style="margin-left:8px">Totale categoria: ${all.length}</span></div>
+    <ol>${questionsHtml}</ol>
+  `;
+}
+
+searchEl.addEventListener('input', (e)=>{ filtered = e.target.value; renderContent(); });
+
+// Toggle difficult question flag, now with Firebase
+async function toggleDifficult(encodedQuestion) {
+  if (!userId) {
+    console.error("User not authenticated. Cannot save difficult question.");
+    return;
+  }
+  // FIX: Use decodeURIComponent to reverse the encoding correctly
+  const question = decodeURIComponent(atob(encodedQuestion));
+
+  if (DIFFICULT_QUESTIONS[question]) {
+      delete DIFFICULT_QUESTIONS[question];
+      try {
+          // Use the encoded string as document ID for safety
+          await deleteDoc(doc(difficultQuestionsCollection, encodedQuestion));
+      } catch(e) {
+          console.error("Error removing document: ", e);
+      }
+  } else {
+      DIFFICULT_QUESTIONS[question] = question;
+      try {
+          // Use the encoded string as document ID for safety
+          await setDoc(doc(difficultQuestionsCollection, encodedQuestion), { question });
+      } catch(e) {
+          console.error("Error adding document: ", e);
+      }
+  }
+  
+  // Rendi il flag visibile anche in modalità quiz
+  if (isQuizMode) {
+      updateQuizFlagIcon();
+  }
+  renderCatList();
+  renderContent();
+}
+
+// ===== Tabs =====
+const tBrowse = document.getElementById('tab-browse');
+const tQuiz = document.getElementById('tab-quiz');
+const browsePanel = document.getElementById('browse-panel');
+const quizPanel = document.getElementById('quiz-panel');
+
+function setTab(tab){
+  isQuizMode = tab==='quiz';
+  const isQuiz = tab==='quiz';
+  tBrowse.classList.toggle('active', !isQuiz);
+  tQuiz.classList.toggle('active', isQuiz);
+  browsePanel.style.display = isQuiz? 'none':'block';
+  quizPanel.style.display = isQuiz? 'block':'none';
+  
+  // Toggle quiz mode layout
+  document.body.classList.toggle('quiz-mode', isQuiz);
+  
+  if (isQuiz) {
+    questionBox.style.display = 'none';
+    questionCard.style.display = 'flex';
+  } else {
+    questionBox.style.display = 'block';
+    questionCard.style.display = 'none';
+  }
+}
+
+tBrowse.onclick = ()=> setTab('browse');
+tQuiz.onclick = ()=> setTab('quiz');
+
+// ===== Quiz Engine =====
+let deck = []; // array di domande (sessione corrente)
+let index = -1; // posizione corrente nel deck
+let history = []; // domande già viste (indici)
+
+function buildDeck(){
+  const cat = quizCategoryEl.value;
+  let questions = [];
+  if(cat === '__ALL__'){
+    Object.values(DATA).forEach(arr => questions.push(...arr));
+  } else if (cat === 'Difficili') {
+    questions = Object.values(DIFFICULT_QUESTIONS);
+  } else {
+    questions = [...(DATA[cat]||[])];
+  }
+  const doShuffle = shuffleModeEl.value === 'true';
+  if(doShuffle){ questions = shuffle(questions); }
+  // Rimuovi duplicati conservando l'ordine
+  questions = [...new Set(questions)];
+  return questions;
+}
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function startQuiz(){
+  deck = buildDeck();
+  index = -1;
+  history = [];
+  statusEl.textContent = 'In corso';
+  nextQ();
+}
+
+function nextQ(){
+  if(index+1 >= deck.length){
+    statusEl.textContent = 'Completato ✅';
+    questionText.textContent = 'Hai visto tutte le domande per questa sessione. Premi "Ricomincia" per rifare il quiz.';
+    updateProgress();
+    quizFlagIcon.style.display = 'none';
+    return;
+  }
+  index++;
+  history.push(index);
+  questionText.textContent = deck[index];
+  updateProgress();
+  updateQuizFlagIcon();
+}
+
+function prevQ(){
+  if(history.length<=1) return; // nulla dietro
+  history.pop();
+  index = history[history.length-1];
+  questionText.textContent = deck[index];
+  updateProgress();
+  updateQuizFlagIcon();
+}
+
+function skipQ(){
+  // Metti la domanda corrente in fondo al mazzo se esiste
+  if(index>=0 && index<deck.length){
+    const cur = deck[index];
+    deck.splice(index,1);
+    deck.push(cur);
+    // torna a mostrare la (nuova) posizione corrente (stessa index ora è un nuovo elemento)
+  }
+  // non aggiungere duplicazioni nella history: chiama nextQ che incrementa index
+  nextQ();
+}
+
+function updateProgress(){
+  counterEl.textContent = `${Math.min(index+1, deck.length)} / ${deck.length}`;
+  const pct = deck.length ? (Math.min(index+1, deck.length)/deck.length)*100 : 0;
+  barEl.style.width = pct + '%';
+}
+
+function updateQuizFlagIcon() {
+    const currentQuestion = deck[index];
+    if (DIFFICULT_QUESTIONS[currentQuestion]) {
+        quizFlagIcon.classList.add('flagged');
+    } else {
+        quizFlagIcon.classList.remove('flagged');
+    }
+    quizFlagIcon.style.display = 'inline-block';
+}
+
+// Controls
+document.getElementById('start-quiz').onclick = startQuiz;
+document.getElementById('next').onclick = nextQ;
+document.getElementById('prev').onclick = prevQ;
+document.getElementById('skip').onclick = skipQ;
+document.getElementById('restart').onclick = ()=> startQuiz();
+
+// ===== Init =====
+async function init(){
+  // Authenticate user
+  if (typeof __initial_auth_token !== 'undefined') {
+    await signInWithCustomToken(auth, __initial_auth_token);
+  } else {
+    await signInAnonymously(auth);
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      userId = user.uid;
+      difficultQuestionsCollection = collection(db, 'artifacts', appId, 'users', userId, 'difficult_questions');
+      
+      // Live update from Firestore. This will also handle the initial load.
+      onSnapshot(difficultQuestionsCollection, (querySnapshot) => {
+        Object.keys(DIFFICULT_QUESTIONS).forEach(k => delete DIFFICULT_QUESTIONS[k]);
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            DIFFICULT_QUESTIONS[data.question] = data.question;
+        });
+        renderCatList();
+        renderContent();
+        if (isQuizMode) {
+          updateQuizFlagIcon();
+        }
+      });
+      
+    } else {
+      console.log("No user signed in.");
+    }
+
+    // Sidebar categories
+    renderCatList();
+    renderContent();
+    // Quiz category dropdown
+    const optAll = document.createElement('option');
+    optAll.value='__ALL__';
+    optAll.textContent='Tutte le categorie';
+    quizCategoryEl.appendChild(optAll);
+
+    // Aggiungi l'opzione "Difficili" nel menu a tendina del quiz
+    const optDifficult = document.createElement('option');
+    optDifficult.value = 'Difficili';
+    optDifficult.textContent = 'Domande difficili';
+    quizCategoryEl.appendChild(optDifficult);
+
+    Object.keys(DATA).forEach(cat=>{
+      const o=document.createElement('option'); o.value=cat; o.textContent=cat; quizCategoryEl.appendChild(o);
+    });
+    
+    // Rendi la funzione toggleDifficult globale e gestisci l'evento
+    window.toggleDifficult = toggleDifficult;
+
+    // Remove inline onclick from HTML and add a proper event listener to the quiz flag icon.
+    // FIX: Add an event listener to handle the click and pass the correctly encoded question.
+    quizFlagIcon.addEventListener('click', () => {
+        if (isQuizMode && index >= 0 && index < deck.length) {
+            const questionToToggle = deck[index];
+            const encodedQuestion = btoa(encodeURIComponent(questionToToggle));
+            toggleDifficult(encodedQuestion);
+        }
+    });
+  });
+}
+init();
+
+</script>
+</body>
+</html>
